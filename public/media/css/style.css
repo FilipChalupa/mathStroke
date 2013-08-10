@@ -1,0 +1,339 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 16px;
+	font: inherit;
+	vertical-align: baseline;
+}
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+	text-align: center;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+a {
+	text-decoration: none;
+	color: inherit;
+}
+a:hover {
+	text-decoration: underline;
+}
+label:hover {
+	cursor: pointer;
+}
+html, body {
+	margin: 0;
+	padding: 0;
+}
+body {
+	color: white;
+	background-color: black;
+	-ms-touch-action: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: moz-none;
+	-ms-user-select: none;
+	user-select: none;
+}
+body, input, textarea {
+	font-family: 'Segoe UI',Helvetica,Arial,'Sans-Serif';
+}
+
+.clearer {
+	clear: both;
+}
+.room {
+	display: none;
+}
+.room.show {
+	display: block;
+}
+.button {
+	margin: 15px auto;
+	max-width: 230px;
+	border: 3px solid #828282;
+	color: #828282;
+	text-transform: uppercase;
+	padding: 15px;
+	font-size: 20px;
+}
+.button:hover {
+	cursor: pointer;
+}
+.button.selected,
+#game.right .keyboard .button.submit,
+#game.wrong .keyboard .button.submit {
+	border-color: transparent;
+	background-color: #0050EF;
+	color: white;
+}
+#messages .msg {
+	display: none;
+}
+#messages .msg.show {
+	display: block;
+}
+#game:after {
+	transition: all .2s;
+	-webkit-transition: all .2s;
+	content: '';
+	display: block;
+	position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+	height: 5px;
+}
+#game.wrong:after {
+	background-color: #FF0000;
+	box-shadow: 0 2px 5px #FF0000;
+}
+#game.right:after {
+	background-color: #00FF00;
+	box-shadow: 0 2px 5px #00FF00;
+}
+.task {
+	position: relative;
+	max-width: 500px;
+	margin: 0 auto;
+	border: 1px solid white;
+	color: white;
+	transition: color .2s, background-color .2s;
+	-webkit-transition: color .2s, background-color .2s;
+	margin-top: 10px;
+}
+.task.danger {
+	color: black;
+	background-color: white;
+}
+.task .title {
+	padding: 5px;
+}
+.task .t_wrapper {
+	padding: 5px;
+}
+.task .time {
+	height: 10px;
+	width: 0%;
+	margin: 0 auto;
+	background-color: white;
+	transition: width .12s, opacity .4s, background-color .2s;
+	-webkit-transition: width .12s, opacity .4s, background-color .2s;
+}
+.task.solved .t_wrapper {
+	display: none;
+}
+.task .player {
+	line-height: 20px;
+	height: 20px;
+}
+.task.danger .time {
+	background-color: black;
+}
+.task.solved .title {
+	color: rgba(255,255,255,0.3);
+}
+.task.solved {
+	border-color: rgba(255,255,255,0.3);
+}
+#lobby .title {
+	font-size: 30px;
+	font-weight: bold;
+	padding: 15px 0 10px 0;
+}
+#game .tasks {
+	position: absolute;
+		top: 0;
+		bottom: 280px;
+		left: 0;
+		right: 0;
+	overflow: hidden;
+	z-index: 2;
+}
+#game.hideKeyboard .tasks  {
+		bottom: 70px;
+}
+.keyboard {
+	width: 280px;
+	height: 280px;
+	margin: 0 auto;
+	position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	font-size: 30px;
+}
+.keyboard .toggle {
+	color: #828282;
+	position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+		margin: 0 auto;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	font-size: 16px;
+	opacity: 0;
+	transition: opacity 0.2s;
+	-webkit-transition: opacity 0.2s;
+}
+.keyboard:hover .toggle {
+	cursor: pointer;
+	opacity: 1;
+}
+.keyboard .button {
+	text-align: left;
+	margin: 5px;
+	width: 44px;
+	height: 34px;
+	padding: 20px 5px 0 5px;
+	float: left;
+	font-size: inherit;
+}
+.keyboard .button.backspace {
+	width: 114px;
+	text-align: center;
+}
+.keyboard .button.submit {
+	width: 254px;
+	height: 44px;
+	line-height: 44px;
+	padding: 5px;
+	text-align: center;
+	max-width: none;
+	overflow: hidden;
+}
+.hideKeyboard .button:not(.submit) {
+	display: none;
+}
+.hideKeyboard .keyboard {
+	height: 70px;
+}
+.stats {
+	max-width: 500px;
+	margin: 0 auto; 
+	padding: 10px;
+	display: none;
+}
+.stats.show {
+	display: block;
+}
+.stats > .titles {
+	color: #828282;
+}
+.stats > .titles > div {
+	float: left;
+	margin-bottom: 10px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 23px;
+}
+.stats > .titles > .nick,
+.stats > .list > div > .nick {
+	width: 60%;
+}
+.stats > .titles > .rank,
+.stats > .list > div > .rank {
+	width: 10%;
+}
+.stats > .titles > .answers {
+	line-height: 25px;
+}
+.stats > .titles > .answers,
+.stats > .list > div > .answers {
+	width: 40%;
+}
+.stats > .titles > .right,
+.stats > .titles > .wrong,
+.stats > .list > div > .right,
+.stats > .list > div > .wrong {
+	width: 15%;
+}
+.stats > .titles > .answers > .title {
+	width: 100%;
+}
+.stats > .list > div > div {
+	float: left;
+}
+.switchToggle {
+	max-width: 280px;
+	margin: 15px auto;
+	font-size: 20px;
+	font-weight: bold;
+	min-height: 23px;
+	position: relative;
+	text-align: left;
+}
+.switchToggle > .title {
+	padding-right: 72px;
+	padding-left: 5px;
+}
+.switchToggle:hover {
+	cursor: pointer;
+}
+.switchToggle > .s {
+	border: 3px solid white;
+	position: absolute;
+		top: 0;
+		right: 0;
+	width: 60px;
+	height: 17px;
+}
+.switchToggle.selected > .s {
+	background-color: #0050EF;
+}
+.switchToggle > .s:before,
+.switchToggle > .s:after {
+	content: '';
+	display: block;
+	position: absolute;
+	border: 3px solid black;
+}
+.switchToggle > .s:before {
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+}
+.switchToggle > .s:after {
+	background-color: white;
+	width: 14px;
+		top: -8px;
+		bottom: -8px;
+		left: -3px;
+}
+.switchToggle.selected > .s:after {
+		left: 46px;
+}
