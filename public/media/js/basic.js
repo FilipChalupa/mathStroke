@@ -9,14 +9,28 @@ $(function () {
 				window.setTimeout(callback, 1000 / 60);
 			};
 	})();
+	var rx = /INPUT|SELECT|TEXTAREA/i;
+	$(document).bind("keydown keypress", function(e){
+		if( e.which == 8 ){ // 8 == backspace
+			if(!rx.test(e.target.tagName) || e.target.disabled || e.target.readOnly ){
+				e.preventDefault();
+			}
+		}
+	});
 	var level = 0,
 		tasks = [],
 		loading = false,
 		inLobby = false,
 		blockReady = false,
-		nick = '---',
+		nick = '',
 		keyboardTimeout;
 	var $level = $('#lobby .level'),
+		$levelFailure = $('#lobby .levelFailure'),
+		$storyTitle = $('#lobby .storyTitle'),
+		$levelTitle = $('#lobby .levelTitle'),
+		$levelText = $('#lobby .levelText .content'),
+		$failureText = $('#lobby .textFailure'),
+		$failureWrapper = $('#lobby .failure'),
 		$lobbyRoom = $('#lobby'),
 		$gameRoom = $('#game'),
 		$settingsRoom = $('#settings'),
@@ -32,7 +46,12 @@ $(function () {
 		$gameControl = $('#game .control'),
 		$gameKeyboardButtons = $('#game .keyboard .button'),
 		$lobbySettings = $('#lobby .settings'),
-		$settingsKeyboard = $('#settings .keyboardToggle');
+		$settingsKeyboard = $('#settings .keyboardToggle'),
+		$settingsNick = $('#settings .nickname'),
+		$countdown = $('#game .countdown');
+	$("form").submit(function(event) {
+		event.preventDefault();
+	});
 	if(typeof(Storage)!=="undefined") {
 		if (localStorage.hideKeyboard == 'true') {
 			$gameRoom.addClass('hideKeyboard');
@@ -43,10 +62,19 @@ $(function () {
 			nick = localStorage.nick;
 		}
 	}
+	$settingsNick.val(nick);
 	$lobbySettings.click(function(){
 		showRoom($settingsRoom);
 	});
 	$('#settings .back').click(function() {
+		var newNick = $settingsNick.val();
+		if (newNick != nick) {
+			nick = newNick;
+			socket.emit("player update", {nick: nick});
+		}
+		if(typeof(Storage)!=="undefined") {
+			localStorage.nick = nick;
+		}
 		showRoom($lobbyRoom);
 	});
 	$settingsKeyboard.click(function() {
@@ -86,6 +114,8 @@ $(function () {
 		socket.on("was wrong", onWasWrong);
 		socket.on("game end", onGameEnd);
 		socket.on("stats", onStats);
+		socket.on("countdown", onCountDown);
+		socket.on("late task", onLateTask);
 		socket.on("test", test);
 	};
 	function test(data){
@@ -98,26 +128,46 @@ $(function () {
 		socket.emit("new player", {nick: nick});
 	};
 	function onGameEnd(data){
-		//
+		$failureText.html(data.t);
+		$levelFailure.text(data.l);
+		$failureWrapper.addClass('show');
+	}
+	function onCountDown(data){
+		$countdown.text(data);
+		if (data === 0) {
+			$countdown.addClass('hide');
+		} else {
+			$countdown.removeClass('hide');
+		}
 	}
 	function onStats(data) {
 		$lobbyStatsList.html('');
 		$lobbyStats.addClass('show');
 		var i = 1;
 		$.each(data,function(key,val){
+			if (val.n == '') {
+				val.n = '&nbsp;';
+			}
 			$lobbyStatsList.append('<div><div class="rank">'+i+'</div><div class="nick">'+val.n+'</div><div class="right">'+val.r+'</div><div class="wrong">'+val.w+'</div></div>');
 			i++;
 		});
 	}
 	function onNewLevel(data){
-		level = data;
+		if (nick == '') {
+			showRoom($settingsRoom);
+		} else {
+			showRoom($lobbyRoom);
+		}
+		level = data.l;
 		tasks = [];
 		loading = false;
 		inLobby = true;
 		$gameTasks.html('');
 		$level.text(level);
-		$lobbyReadyButton.removeClass('selected');	
-		showRoom($lobbyRoom);
+		$storyTitle.html(data.st);
+		$levelTitle.html(data.lt);
+		$levelText.html(data.lx);
+		$lobbyReadyButton.removeClass('selected');
 		$gameRoom.removeClass('wrong');
 		$gameRoom.removeClass('right');
 		$gameInput.text('');
@@ -129,6 +179,7 @@ $(function () {
 	function onLevelStart(data){
 		level = data;
 		inLobby = false;
+		$failureWrapper.removeClass('show');
 		showRoom($gameRoom);
 	}
 	function onNotReady(data){
@@ -141,6 +192,9 @@ $(function () {
 			timeEnd: data.te
 		}
 		$gameTasks.append('<div class="task" data-id="'+data.id+'"><div class="title">'+data.d+'</div><div class="t_wrapper"><div class="time"></div></div></div>');
+		setTimeout(function(){
+			$gameTasks.children('.task').addClass('show');
+		},10);
 	}
 	function onTime(data) {
 		$gameTasks.children('.task').each(function(){
@@ -148,13 +202,13 @@ $(function () {
 			if (!$this.hasClass('solved')) {
 				var w = Math.floor(100*(tasks[$this.data('id')].timeEnd-data)/tasks[$this.data('id')].timeLifespan),
 					o = 1;
-				o = w/100;
-				if (w < 1) {w = 1;}
-				if (o < 0.1) {
-					o = 1;
-					$this.addClass('danger');
+				if (w < 1) {
+					w = 0;
 				} else {
-					o = 1-o;
+					o = 1-w/100;
+					if (w < 10) {
+						$this.addClass('danger');
+					}
 				}
 				$this.find('.time').css({
 					'opacity': o,
@@ -176,10 +230,20 @@ $(function () {
 			}
 		});
 	}
+	function onLateTask(data){
+		$gameTasks.children('.task').each(function(){
+			var $this = $(this);
+			if ($this.data('id') == data) {
+				$this.addClass('late');
+			}
+		});
+	}
 	function onWasWrong(data){
 		if (data === true) {
+			$gameRoom.removeClass('right');
 			$gameRoom.addClass('wrong');
 		} else {
+			$gameRoom.removeClass('wrong');
 			$gameRoom.addClass('right');
 		}
 	}
@@ -192,7 +256,7 @@ $(function () {
 		}
 	}
 	function gameKey(key){
-		if (inLobby) {
+		if (inLobby && $lobbyRoom.hasClass('show')) {
 			if (key === 'submit') {
 				lobbyReadyButtonClick();
 			}
@@ -233,10 +297,11 @@ $(function () {
 			gameKey(e.keyCode-96);
 		} else if (e.keyCode >= 48 && e.keyCode <= 57) {
 			gameKey(e.keyCode-48);
-		} else if (e.keyCode === 13 || e.keyCode === 32) {
+		} else if (e.keyCode === 13) {
 			gameKey('submit')
+		} else if (e.keyCode === 8) {
+			gameKey('backspace')
 		}
-		//missing backspace
 	});
 	function sendSolution(solution) {
 		socket.emit("solution", $gameInput.text());

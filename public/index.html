@@ -12,13 +12,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 </head>
 <body>
-	<!--<div id="settings">
-		<form id="settings_form" action="#">
-			<input type="text" class="nickname" placeholder="Přezdívka">
-			<br>
-			<input type="submit" value="Start">
-		</form>
-	</div>-->
 	<div id="messages" class="room show">
 		<div class="msg connecting show">
 			Pokouším se připojit.
@@ -28,13 +21,21 @@
 		</div>
 	</div>
 	<div id="settings" class="room">
-		<div class="showKeyboard"></div>
-		<div class="keyboardToggle switchToggle">
-			<div class="title">Zobrazit klávesnici</div>
-			<div class="s"></div></div>
-		<div class="button back">Zpět</div>
+		<div class="roomTitle">Nastavení</div>
+		<form id="settings_form" action="#">
+			<div>
+				<input type="text" class="nickname" maxlength="13" placeholder="Přezdívka">
+			</div>
+			<div class="showKeyboard"></div>
+			<div class="keyboardToggle switchToggle">
+				<div class="title">Zobrazit klávesnici</div>
+				<div class="s"></div>
+			</div>
+		</form>
+		<div class="button back">Uložit</div>
 	</div>
 	<div id="game" class="room">
+		<div class="countdown"></div>
 		<div class="tasks"></div>
 		<div class="control">
 			<div class="keyboard">
@@ -54,15 +55,27 @@
 		</div>
 	</div>
 	<div id="lobby" class="room">
-		<div class="title">
-			Level:
-			<span class="level"></span>
+		<div class="roomTitle">
+			<div class="storyTitle"></div>
+			<div class="levelNumb">
+				Level: <span class="level"></span>
+			</div>
 		</div>
 		<div class="button ready">
 			Připraven
 			<span class="notReady"></span>
 		</div>
+		<div class="story">
+			<div class="levelTitle"></div>
+			<div class="levelText"><div class="content"></div></div>
+		</div>
 		<div class="stats">
+			<div class="failure">
+				<div>
+					Poslední level: <span class="levelFailure"></span>
+				</div>
+				<div class="textFailure"></div>
+			</div>
 			<div class="titles">
 				<div class="rank">#</div>
 				<div class="nick">Přezdívka</div>
