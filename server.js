@@ -54,27 +54,142 @@ var socket,
 	recoverReloadCountDown = 10,
 	stories = [],
 	story,
-	gameRunning = false;
+	gameRunning = false,
+	taskIndex = 0,
+	findFreeSolutionTries = 0;
+function getRandomNumber(start,plus){
+	if (plus < 0) { //negative to border
+		return start+Math.floor(Math.random()*((-start-plus)+1));
+	} else {
+		return start+Math.floor(Math.random()*(plus+1));
+	}
+}
+function getTask(type,difficulty){
+	var task, solution, x, y, tempA, tempB;
+	switch (type) {
+		case 'x+y':
+			switch (difficulty) {
+				case 1:
+					solution = getRandomNumber(1,8);
+					x = getRandomNumber(0,solution);
+					y = solution-x;
+					break;
+				case 2:
+					solution = getRandomNumber(0,9);
+					x = getRandomNumber(0,solution);
+					y = solution-x;
+					tempA = getRandomNumber(1,8);
+					tempB = getRandomNumber(0,tempA);
+					y = (tempA-tempB)*10+y;
+					x = tempB*10+x;
+					break;
+				case 3:
+					if (Math.random() < 0.2) {
+						x = getRandomNumber(1,-4);
+					} else {
+						x = getRandomNumber(5,-9);
+					}
+					y = getRandomNumber(10-x,-9);
+					tempA = getRandomNumber(0,8);
+					tempB = getRandomNumber(0,8-tempA);
+					x = tempA*10+x;
+					y = tempB*10+y;
+					break;
+			}
+			task = x+' + '+y;
+			solution = x+y;
+			break;
+		case 'x-y':
+			switch (difficulty) {
+				case 1:
+					x = getRandomNumber(1,8);
+					y = getRandomNumber(0,x);
+					break;
+				case 2:
+					tempA = getRandomNumber(1,8);
+					tempB = getRandomNumber(1,8);
+					y = getRandomNumber(0,tempA);
+					x = tempA+tempB*10;
+					y += 10*getRandomNumber(0,tempB);
+					break;
+				case 3:
+					tempA = getRandomNumber(0,8);
+					tempB = getRandomNumber(1,8);
+					y = getRandomNumber(tempA+1,-9);
+					x = tempA+tempB*10;
+					y += 10*getRandomNumber(0,tempB-1);
+					break;
+			}
+			task = x+' - '+y;
+			solution = x-y;
+			break;
+	}
+	var doIt = true;
+	for (var id in runningTasks) {
+		if (doIt === true && runningTasks[id].solution === solution) {
+			findFreeSolutionTries++;
+			if (findFreeSolutionTries < 10) {
+				return getTask(type,difficulty);
+			} else {
+				doIt = false;
+				util.log('Task with unique solution not found.');
+			}
+		}
+	}
+	findFreeSolutionTries = 0;
+	return {
+		display: task,
+		solution: solution
+	};
+}
+/*for (var i = 0; i<=50; i++){
+	var tt = getTask('x+y',3);
+	util.log(tt.display+' = '+tt.solution);
+}*/
 var levels = {
 	1: {
-		tasksSpacePlus: 15,
+		tasksSpacePlus: 10,
 		tasksSpaceMin: 10,
-		tasks: 10
+		tasks: [
+			{t: 'x+y',d: 1, time: 150},
+			{t: 'x+y',d: 1, time: 120},
+			{t: 'x+y',d: 2, time: 150},
+			{t: 'x+y',d: 2, time: 120},
+			{t: 'x-y',d: 1, time: 150}
+		]
 	},
 	2: {
 		tasksSpacePlus: 10,
 		tasksSpaceMin: 5,
-		tasks: 20
+		tasks: [
+			{t: 'x+y',d: 1, time: 100},
+			{t: 'x+y',d: 1, time: 90},
+			{t: 'x+y',d: 2, time: 80},
+			{t: 'x+y',d: 2, time: 70},
+			{t: 'x-y',d: 1, time: 60}
+		]
 	},
 	3: {
 		tasksSpacePlus: 5,
 		tasksSpaceMin: 1,
-		tasks: 30
+		tasks: [
+			{t: 'x+y',d: 1, time: 100},
+			{t: 'x+y',d: 1, time: 90},
+			{t: 'x+y',d: 2, time: 80},
+			{t: 'x+y',d: 2, time: 70},
+			{t: 'x-y',d: 1, time: 60}
+		]
 	},
 	4: {
 		tasksSpacePlus: 0,
 		tasksSpaceMin: 1,
-		tasks: 30
+		tasks: [
+			{t: 'x+y',d: 1, time: 100},
+			{t: 'x+y',d: 1, time: 90},
+			{t: 'x+y',d: 2, time: 80},
+			{t: 'x+y',d: 2, time: 70},
+			{t: 'x-y',d: 1, time: 60}
+		]
 	}
 };
 stories.push({
@@ -267,13 +382,14 @@ function setNextLevel(){
 	socket.sockets.emit('new level',getNewLevelData());
 	socket.sockets.emit('not ready', countReadyPlayers());
 
-	remainingTasks = levels[level].tasks;
+	remainingTasks = levels[level].tasks.length;
 	runningTasks = [];
 	tasks = [];
 	inLobby = true;
 	time = 0;
 	tasksSpaceI = 0;
 	gameRunning = true;
+	taskIndex = 0;
 
 	tasksSpaceRelative = levels[level].tasksSpaceMin+levels[level].tasksSpacePlus;
 
@@ -316,26 +432,24 @@ function startGameLoop(){
 			clearInterval(gameLoop);
 			setTimeout(function(){
 				setNextLevel();
-			},3000);
+			},2000);
 		} else {
 			if (tasksSpaceI === 0 || countArray(runningTasks) === 0) {
 				tasksSpaceI = tasksSpaceRelative;
 				if (countArray(runningTasks) < remainingTasks) {
-					var randNumb1 = Math.floor(Math.random()*50),
-						randNumb2 = Math.floor(Math.random()*51);
-					var taskForm = '('+randNumb1+' + '+randNumb2+')';
-					var taskSolution = randNumb1+randNumb2;
-					var lifes = Math.floor((Math.random()*100)+100);
+					var newTask = getTask(levels[level].tasks[taskIndex].t,levels[level].tasks[taskIndex].d);
+					newTask.time = levels[level].tasks[taskIndex].time;
+					taskIndex++;
 					runningTasks[taskLastId] = {
-						display: taskForm,
-						solution: taskSolution,
-						timeLifespan: lifes,
-						timeEnd: time + lifes
+						display: newTask.display,
+						solution: newTask.solution,
+						timeLifespan: newTask.time,
+						timeEnd: time + newTask.time
 
 					};
 					socket.sockets.emit('new task', sendTaskForm(taskLastId));
 					taskLastId++;
-					tasksSpaceRelative = Math.floor(levels[level].tasksSpaceMin+levels[level].tasksSpacePlus*(remainingTasks-countArray(runningTasks))/levels[level].tasks);
+					tasksSpaceRelative = Math.floor(levels[level].tasksSpaceMin+levels[level].tasksSpacePlus*(remainingTasks-countArray(runningTasks))/levels[level].tasks.length);
 				}
 			} else {
 				tasksSpaceI--;

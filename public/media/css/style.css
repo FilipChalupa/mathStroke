@@ -117,15 +117,16 @@ body, input, textarea {
 		left: 0;
 		right: 0;
 		bottom: 0;
-	z-index: 9;
 }
 #game.wrong:after {
 	border: 1px solid #FF0000;
 	box-shadow: inset 0 0 40px #FF0000;
+	z-index: 9;
 }
 #game.right:after {
 	border: 1px solid #00FF00;
 	box-shadow: inset 0 0 40px #00FF00;
+	z-index: 9;
 }
 .task {
 	position: relative;
@@ -215,7 +216,7 @@ body, input, textarea {
 	padding: 5px;
 }
 #lobby .levelText {
-	width: 266px;
+	width: 250px;
 	overflow: auto;
 	text-align: center;
 }
@@ -294,6 +295,9 @@ body, input, textarea {
 .stats {
 	display: none;
 	padding-bottom: 10px;
+}
+.stats .levelFailure {
+	font-weight: bold;
 }
 .stats.show {
 	display: block;
