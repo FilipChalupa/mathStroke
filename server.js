@@ -49,7 +49,6 @@ var socket,
 	inLobby = true,
 	gameLoop,
 	tasksSpaceI = 0,
-	tasksSpaceRelative = 0,
 	reloadCountdown = 2,
 	recoverReloadCountDown = 10,
 	stories = [],
@@ -57,12 +56,8 @@ var socket,
 	gameRunning = false,
 	taskIndex = 0,
 	findFreeSolutionTries = 0;
-function getRandomNumber(start,plus){
-	if (plus < 0) { //negative to border
-		return start+Math.floor(Math.random()*((-start-plus)+1));
-	} else {
-		return start+Math.floor(Math.random()*(plus+1));
-	}
+function getRandomInInterval(first,last){
+	return first+Math.floor(Math.random()*((last-first)+1));
 }
 function getTask(type,difficulty){
 	var task, solution, x, y, tempA, tempB;
@@ -70,28 +65,28 @@ function getTask(type,difficulty){
 		case 'x+y':
 			switch (difficulty) {
 				case 1:
-					solution = getRandomNumber(1,8);
-					x = getRandomNumber(0,solution);
+					solution = getRandomInInterval(1,9);
+					x = getRandomInInterval(0,solution);
 					y = solution-x;
 					break;
 				case 2:
-					solution = getRandomNumber(0,9);
-					x = getRandomNumber(0,solution);
+					solution = getRandomInInterval(0,9);
+					x = getRandomInInterval(0,solution);
 					y = solution-x;
-					tempA = getRandomNumber(1,8);
-					tempB = getRandomNumber(0,tempA);
+					tempA = getRandomInInterval(1,9);
+					tempB = getRandomInInterval(0,tempA);
 					y = (tempA-tempB)*10+y;
 					x = tempB*10+x;
 					break;
 				case 3:
 					if (Math.random() < 0.2) {
-						x = getRandomNumber(1,-4);
+						x = getRandomInInterval(1,4);
 					} else {
-						x = getRandomNumber(5,-9);
+						x = getRandomInInterval(5,9);
 					}
-					y = getRandomNumber(10-x,-9);
-					tempA = getRandomNumber(0,8);
-					tempB = getRandomNumber(0,8-tempA);
+					y = getRandomInInterval(10-x,9);
+					tempA = getRandomInInterval(0,8);
+					tempB = getRandomInInterval(0,8-tempA);
 					x = tempA*10+x;
 					y = tempB*10+y;
 					break;
@@ -102,26 +97,44 @@ function getTask(type,difficulty){
 		case 'x-y':
 			switch (difficulty) {
 				case 1:
-					x = getRandomNumber(1,8);
-					y = getRandomNumber(0,x);
+					x = getRandomInInterval(1,9);
+					y = getRandomInInterval(0,x);
 					break;
 				case 2:
-					tempA = getRandomNumber(1,8);
-					tempB = getRandomNumber(1,8);
-					y = getRandomNumber(0,tempA);
+					tempA = getRandomInInterval(1,9);
+					tempB = getRandomInInterval(1,9);
+					y = getRandomInInterval(0,tempA);
 					x = tempA+tempB*10;
-					y += 10*getRandomNumber(0,tempB);
+					y += 10*getRandomInInterval(0,tempB);
 					break;
 				case 3:
-					tempA = getRandomNumber(0,8);
-					tempB = getRandomNumber(1,8);
-					y = getRandomNumber(tempA+1,-9);
+					tempA = getRandomInInterval(0,8);
+					tempB = getRandomInInterval(1,9);
+					y = getRandomInInterval(tempA+1,9);
 					x = tempA+tempB*10;
-					y += 10*getRandomNumber(0,tempB-1);
+					y += 10*getRandomInInterval(0,tempB-1);
 					break;
 			}
 			task = x+' - '+y;
 			solution = x-y;
+			break;
+		case 'x*y':
+			switch (difficulty) {
+				case 1:
+					x = getRandomInInterval(2,-5);
+					y = getRandomInInterval(2,-5);
+					break;
+				case 2:
+					x = getRandomInInterval(2,-10);
+					y = getRandomInInterval(2,-10);
+					break;
+				case 3:
+					x = getRandomInInterval(12,-15);
+					y = getRandomInInterval(2,-9);
+					break;
+			}
+			task = x+' &#215; '+y;
+			solution = x*y;
 			break;
 	}
 	var doIt = true;
@@ -143,7 +156,7 @@ function getTask(type,difficulty){
 	};
 }
 /*for (var i = 0; i<=50; i++){
-	var tt = getTask('x+y',3);
+	var tt = getTask('x+y',1);
 	util.log(tt.display+' = '+tt.solution);
 }*/
 var levels = {
@@ -151,44 +164,102 @@ var levels = {
 		tasksSpacePlus: 10,
 		tasksSpaceMin: 10,
 		tasks: [
-			{t: 'x+y',d: 1, time: 150},
-			{t: 'x+y',d: 1, time: 120},
-			{t: 'x+y',d: 2, time: 150},
-			{t: 'x+y',d: 2, time: 120},
-			{t: 'x-y',d: 1, time: 150}
+			{t: 'x+y',d: 1, time: 150, space: 10},
+			{t: 'x+y',d: 1, time: 120, space: 1},
+			{t: 'x+y',d: 2, time: 150, space: 10},
+			{t: 'x+y',d: 2, time: 120, space: 1},
+			{t: 'x-y',d: 1, time: 150, space: 10}
 		]
 	},
 	2: {
 		tasksSpacePlus: 10,
 		tasksSpaceMin: 5,
 		tasks: [
-			{t: 'x+y',d: 1, time: 100},
-			{t: 'x+y',d: 1, time: 90},
-			{t: 'x+y',d: 2, time: 80},
-			{t: 'x+y',d: 2, time: 70},
-			{t: 'x-y',d: 1, time: 60}
+			{t: 'x*y',d: 1, time: 150, space: 10},
+			{t: 'x*y',d: 1, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10}
 		]
 	},
 	3: {
 		tasksSpacePlus: 5,
 		tasksSpaceMin: 1,
 		tasks: [
-			{t: 'x+y',d: 1, time: 100},
-			{t: 'x+y',d: 1, time: 90},
-			{t: 'x+y',d: 2, time: 80},
-			{t: 'x+y',d: 2, time: 70},
-			{t: 'x-y',d: 1, time: 60}
+			{t: 'x+y',d: 2, time: 150, space: 10},
+			{t: 'x-y',d: 2, time: 150, space: 10},
+			{t: 'x+y',d: 2, time: 120, space: 10},
+			{t: 'x-y',d: 2, time: 120, space: 10},
+			{t: 'x+y',d: 3, time: 150, space: 10},
+			{t: 'x-y',d: 3, time: 150, space: 10},
+			{t: 'x+y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x+y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x+y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
 		]
 	},
 	4: {
-		tasksSpacePlus: 0,
-		tasksSpaceMin: 1,
+		tasksSpacePlus: 10,
+		tasksSpaceMin: 10,
 		tasks: [
-			{t: 'x+y',d: 1, time: 100},
-			{t: 'x+y',d: 1, time: 90},
-			{t: 'x+y',d: 2, time: 80},
-			{t: 'x+y',d: 2, time: 70},
-			{t: 'x-y',d: 1, time: 60}
+			{t: 'x-y',d: 2, time: 120, space: 10},
+			{t: 'x-y',d: 2, time: 120, space: 10},
+			{t: 'x-y',d: 2, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x+y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x+y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x+y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x+y',d: 3, time: 120, space: 10},
+			{t: 'x-y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+		]
+	},
+	5: {
+		tasksSpacePlus: 10,
+		tasksSpaceMin: 10,
+		tasks: [
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 2, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10},
+			{t: 'x*y',d: 3, time: 120, space: 10}
 		]
 	}
 };
@@ -391,8 +462,6 @@ function setNextLevel(){
 	gameRunning = true;
 	taskIndex = 0;
 
-	tasksSpaceRelative = levels[level].tasksSpaceMin+levels[level].tasksSpacePlus;
-
 	if (level !== 1) {
 		socket.sockets.emit('stats',getStats());
 	}
@@ -434,11 +503,11 @@ function startGameLoop(){
 				setNextLevel();
 			},2000);
 		} else {
-			if (tasksSpaceI === 0 || countArray(runningTasks) === 0) {
-				tasksSpaceI = tasksSpaceRelative;
+			if (tasksSpaceI === 0 || countArray(runningTasks) < countArray(players)) {
 				if (countArray(runningTasks) < remainingTasks) {
 					var newTask = getTask(levels[level].tasks[taskIndex].t,levels[level].tasks[taskIndex].d);
 					newTask.time = levels[level].tasks[taskIndex].time;
+					tasksSpaceI = levels[level].tasks[taskIndex].space;
 					taskIndex++;
 					runningTasks[taskLastId] = {
 						display: newTask.display,
@@ -449,7 +518,6 @@ function startGameLoop(){
 					};
 					socket.sockets.emit('new task', sendTaskForm(taskLastId));
 					taskLastId++;
-					tasksSpaceRelative = Math.floor(levels[level].tasksSpaceMin+levels[level].tasksSpacePlus*(remainingTasks-countArray(runningTasks))/levels[level].tasks.length);
 				}
 			} else {
 				tasksSpaceI--;
