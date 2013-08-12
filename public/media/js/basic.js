@@ -23,6 +23,7 @@ $(function () {
 		inLobby = false,
 		blockReady = false,
 		nick = '',
+		playerId = 0,
 		keyboardTimeout;
 	var $level = $('#lobby .level'),
 		$levelFailure = $('#lobby .levelFailure'),
@@ -41,14 +42,14 @@ $(function () {
 		$lobbyReadyButton = $('#lobby .ready'),
 		$lobbyReadyCount = $('#lobby .notReady'),
 		$lobbyStatsList = $('#lobby .stats .list'),
-		$lobbyStats = $('#lobby .stats'),
 		$gameInput = $('#game .input'),
 		$gameControl = $('#game .control'),
 		$gameKeyboardButtons = $('#game .keyboard .button'),
 		$lobbySettings = $('#lobby .settings'),
 		$settingsKeyboard = $('#settings .keyboardToggle'),
 		$settingsNick = $('#settings .nickname'),
-		$countdown = $('#game .countdown');
+		$countdown = $('#game .countdown'),
+		$settingsBack = $('#settings .back');
 	$("form").submit(function(event) {
 		event.preventDefault();
 	});
@@ -66,7 +67,7 @@ $(function () {
 	$lobbySettings.click(function(){
 		showRoom($settingsRoom);
 	});
-	$('#settings .back').click(function() {
+	$settingsBack.click(function() {
 		var newNick = $settingsNick.val();
 		if (newNick != nick) {
 			nick = newNick;
@@ -116,6 +117,9 @@ $(function () {
 		socket.on("stats", onStats);
 		socket.on("countdown", onCountDown);
 		socket.on("late task", onLateTask);
+		socket.on("player id", onPlayerId);
+		socket.on("player gone", onPlayerGone);
+		socket.on("player new", onPlayerNew);
 		socket.on("test", test);
 	};
 	function test(data){
@@ -127,6 +131,9 @@ $(function () {
 	function onSocketConnected() {
 		socket.emit("new player", {nick: nick});
 	};
+	function onPlayerId(data) {
+		playerId = data;
+	}
 	function onGameEnd(data){
 		$failureText.html(data.t);
 		$levelFailure.text(data.l);
@@ -142,14 +149,35 @@ $(function () {
 	}
 	function onStats(data) {
 		$lobbyStatsList.html('');
-		$lobbyStats.addClass('show');
 		var i = 1;
 		$.each(data,function(key,val){
-			if (val.n == '') {
-				val.n = '&nbsp;';
-			}
-			$lobbyStatsList.append('<div><div class="rank">'+i+'</div><div class="nick">'+val.n+'</div><div class="right">'+val.r+'</div><div class="wrong">'+val.w+'</div></div>');
+			addToStats(i,val.i,val.n,val.r,val.w);
 			i++;
+		});
+	}
+	function onPlayerNew(data){
+		if (playerId != data.i) {
+			addToStats('&nbsp;',data.i,data.n,0,0);
+		}
+	}
+	function addToStats(rank,id,nick,right,wrong){
+		var addClass;
+		if (nick == '') {
+			nick = '&nbsp;';
+		}
+		if (playerId == id) {
+			addClass = 'class="local"';
+		} else {
+			addClass = '';
+		}
+		$lobbyStatsList.append('<div data-id="'+id+'"'+addClass+'><div class="rank">'+rank+'</div><div class="nick">'+nick+'</div><div class="right">'+right+'</div><div class="wrong">'+wrong+'</div></div>');
+	}
+	function onPlayerGone(data){
+		$lobbyStatsList.children('div').each(function(){
+			var $this = $(this);
+			if ($this.data('id') == data) {
+				$this.addClass('gone');
+			}
 		});
 	}
 	function onNewLevel(data){
@@ -184,6 +212,15 @@ $(function () {
 	}
 	function onNotReady(data){
 		$lobbyReadyCount.text('('+data.y+'/'+data.t+')');
+		console.log('loop start');
+		$lobbyStatsList.children('div').each(function(){
+			var $this = $(this);
+			if ($.inArray($this.data('id'),data.nId) !== -1) {
+				$this.addClass('notReady');
+			} else {
+				$this.removeClass('notReady');
+			}
+		});
 	}
 	function onNewTask(data){
 		tasks[data.id] = {

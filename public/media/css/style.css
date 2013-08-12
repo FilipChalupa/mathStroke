@@ -293,14 +293,10 @@ body, input, textarea {
 	display: none;
 }
 .stats {
-	display: none;
 	padding-bottom: 10px;
 }
 .stats .levelFailure {
 	font-weight: bold;
-}
-.stats.show {
-	display: block;
 }
 .stats > .titles {
 	color: #828282;
@@ -346,6 +342,18 @@ body, input, textarea {
 }
 .stats > .list > div > div {
 	float: left;
+}
+.stats > .list > .local > .nick {
+	text-decoration: underline;
+}
+.stats .list > div {
+	color: #0050EF;
+}
+.stats .list > .notReady {
+	color: #828282;
+}
+.stats .list > .gone {
+	color: #2C2C2C;
 }
 .switchToggle {
 	max-width: 264px;

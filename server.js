@@ -44,7 +44,8 @@ var socket,
 	players = [],
 	level = 1,
 	runningTasks = [],
-	taskLastId = 1,
+	taskLastId = 0,
+	playerLastId = 0,
 	remainingTasks = 0,
 	inLobby = true,
 	gameLoop,
@@ -338,15 +339,20 @@ var safeNick = function(string, reverse){
 };
 function onNewPlayer(data){
 	util.log('New player (ID: '+this.id+')');
+	playerLastId++;
 	players[this.id] = {
+		id: playerLastId,
 		nick: safeNick(data.nick),
 		ready: false,
 		reloadCountdown: 0,
 		right: 0,
 		wrong: 0
 	};
+	socket.sockets.socket(this.id).emit('player id', playerLastId);
+	socket.sockets.emit('player new',{i: playerLastId, n: players[this.id].nick});
 	if (inLobby === true) {
 		socket.sockets.socket(this.id).emit('new level', getNewLevelData());
+		socket.sockets.socket(this.id).emit('stats',getStats());
 		socket.sockets.emit('not ready', countReadyPlayers());
 	} else {
 		socket.sockets.socket(this.id).emit('level start', level);
@@ -360,6 +366,7 @@ function onPlayerUpdate(data){
 }
 function onPlayerDisconnect(){
 	util.log('Player disconnected (ID: '+this.id+')');
+	socket.sockets.emit('player gone',players[this.id].id);
 	delete players[this.id];
 	checkReady();
 }
@@ -386,14 +393,16 @@ function onPlayerReady(data){
 }
 function countReadyPlayers(){
 	var notReady = 0,
-		total = 0;
+		total = 0,
+		nIds = [];
 	for (var player in players) {
 		if (players[player].ready === false) {
 			notReady++;
+			nIds.push(players[player].id);
 		}
 		total++;
 	}
-	return {y: (total-notReady), n: notReady, t: total};
+	return {y: (total-notReady), n: notReady, t: total, nId: nIds};
 }
 function countArray(array){
 	var i = 0;
@@ -406,6 +415,7 @@ function getStats(){
 	var stats = [];
 	for (var id in players) {
 		stats.push({
+			i: players[id].id,
 			n: players[id].nick,
 			r: players[id].right,
 			w: players[id].wrong
@@ -424,7 +434,7 @@ function gameEnd(){
 }
 function setNewGame(){
 	level = 1;
-	taskLastId = 1;
+	taskLastId = 0;
 	story = stories[Math.floor(Math.random() * stories.length)];
 	for (var player in players) {
 		players[player].ready = false;
@@ -509,6 +519,7 @@ function startGameLoop(){
 					newTask.time = levels[level].tasks[taskIndex].time;
 					tasksSpaceI = levels[level].tasks[taskIndex].space;
 					taskIndex++;
+					taskLastId++;
 					runningTasks[taskLastId] = {
 						display: newTask.display,
 						solution: newTask.solution,
@@ -517,7 +528,6 @@ function startGameLoop(){
 
 					};
 					socket.sockets.emit('new task', sendTaskForm(taskLastId));
-					taskLastId++;
 				}
 			} else {
 				tasksSpaceI--;
