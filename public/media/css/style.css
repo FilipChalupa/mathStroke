@@ -349,6 +349,9 @@ body, input, textarea {
 }
 .stats .list > div {
 	color: #0050EF;
+	font-size: 16px;
+	height: 20px;
+	line-height: 20px;
 }
 .stats .list > .notReady {
 	color: #828282;

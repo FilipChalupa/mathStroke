@@ -123,16 +123,16 @@ function getTask(type,difficulty){
 		case 'x*y':
 			switch (difficulty) {
 				case 1:
-					x = getRandomInInterval(2,-5);
-					y = getRandomInInterval(2,-5);
+					x = getRandomInInterval(2,5);
+					y = getRandomInInterval(2,5);
 					break;
 				case 2:
-					x = getRandomInInterval(2,-10);
-					y = getRandomInInterval(2,-10);
+					x = getRandomInInterval(2,10);
+					y = getRandomInInterval(2,10);
 					break;
 				case 3:
-					x = getRandomInInterval(12,-15);
-					y = getRandomInInterval(2,-9);
+					x = getRandomInInterval(12,15);
+					y = getRandomInInterval(2,9);
 					break;
 			}
 			task = x+' &#215; '+y;
