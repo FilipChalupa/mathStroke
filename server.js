@@ -265,29 +265,29 @@ var levels = {
 	}
 };
 stories.push({
-	title: 'Počítačka',
+	title: 'mathStroke',
 	levels: {
 		1: {
-			title: 'Vítej ve hře',
-			text: 'Sčítej!'
+			title: 'Welcome',
+			text: 'Do the math!'
 		},
 		2: {
-			title: 'Rychleji',
-			text: 'Dochází nám čas. Musíme zvýšit výkon.'
+			title: 'Faster!',
+			text: 'We are running out of time.'
 		},
 		3: {
 			title: 'Turbo',
-			text: 'Na lenošení teď není čas. Musíme počítat.'
+			text: 'There is no time to rest'
 		},
 		/*3: {
-			title: 'Obtížnější',
+			title: 'Harder',
 			text: '<img src="http://library.thinkquest.org/J002596/Calcdude.gif" width="415" height="388"><p>I did the same thing as well, though you do have to be careful sometimes when messing with Array.prototype, especially when using third-party modules.</p><p>I did the same thing as well, though you do have to be careful sometimes when messing with Array.prototype, especially when using third-party modules.</p>'
 		},*/
 		end: {
-			title: 'Konec příběhu',
-			text: 'Toto je konec.'
+			title: 'End',
+			text: 'This is the end of the story.'
 		},
-		failure: 'Konec hry.'
+		failure: 'Game over.'
 	}
 });
 function init() {
@@ -363,6 +363,7 @@ function onNewPlayer(data){
 }
 function onPlayerUpdate(data){
 	players[this.id].nick = safeNick(data.nick);
+	socket.sockets.emit('nick update',{i: players[this.id].id, n: players[this.id].nick});
 }
 function onPlayerDisconnect(){
 	util.log('Player disconnected (ID: '+this.id+')');

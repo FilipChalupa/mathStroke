@@ -120,6 +120,7 @@ $(function () {
 		socket.on("player id", onPlayerId);
 		socket.on("player gone", onPlayerGone);
 		socket.on("player new", onPlayerNew);
+		socket.on("nick update", onNickUpdate);
 		socket.on("test", test);
 	};
 	function test(data){
@@ -177,6 +178,14 @@ $(function () {
 			var $this = $(this);
 			if ($this.data('id') == data) {
 				$this.addClass('gone');
+			}
+		});
+	}
+	function onNickUpdate(data){
+		$lobbyStatsList.children('div').each(function(){
+			var $this = $(this);
+			if ($this.data('id') == data.i) {
+				$this.find('.nick').html(data.n);
 			}
 		});
 	}
