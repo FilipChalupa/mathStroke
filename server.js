@@ -9,7 +9,7 @@ var http = require("http"),
     mime = require("mime"),
     port = process.argv[2] || 8080;
  
-http.createServer(function(request, response) {
+var server = http.createServer(function(request, response) {
 	var uri = '/public'+url.parse(request.url).pathname,
 		filename = path.join(process.cwd(), uri);
 	path.exists(filename, function(exists) {
@@ -35,8 +35,20 @@ http.createServer(function(request, response) {
 			response.end();
 		});
 	});
-}).listen(parseInt(port, 10));
+});
 util.log("Static file server running at http://localhost:" + port + "/");
+
+function init() {
+	players = [];
+	socket = io.listen(server);
+	socket.configure(function() {
+		socket.set("transports", ["websocket"]);
+		socket.set("log level", 2);
+	});
+	setEventHandlers();
+	setNewGame();
+};
+server.listen(parseInt(port, 10));
 
 
 
@@ -291,16 +303,6 @@ stories.push({
 		failure: 'Game over.'
 	}
 });
-function init() {
-	controllers = [];
-	socket = io.listen(2324);
-	socket.configure(function() {
-		socket.set("transports", ["websocket"]);
-		socket.set("log level", 2);
-	});
-	setEventHandlers();
-	setNewGame();
-};
 var setEventHandlers = function() {
 	socket.sockets.on("connection", onSocketConnection);
 };

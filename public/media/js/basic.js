@@ -124,7 +124,7 @@ $(function () {
 		$messagesRoom.children('.'+message).addClass('show');
 	}
 	function connect() {
-		socket = io.connect("http://192.168.1.230", {port: 2324, transports: ["websocket"]});
+		socket = io.connect("http://192.168.1.230", {port: 8080, transports: ["websocket"]});
 		setEventHandlers();
 	};
 	var setEventHandlers = function() {
