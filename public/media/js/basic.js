@@ -1,6 +1,6 @@
 $(function () {
 	var requestAnimationFrame = (function(){
-		return  window.requestAnimationFrame       || 
+		return  window.requestAnimationFrame   || 
 			window.webkitRequestAnimationFrame || 
 			window.mozRequestAnimationFrame    || 
 			window.oRequestAnimationFrame      || 
@@ -24,9 +24,11 @@ $(function () {
 		blockReady = false,
 		nick = '',
 		playerId = 0,
-		keyboardTimeout;
+		keyboardTimeout,
+		playSounds = false;
 	var $level = $('#lobby .level'),
 		$levelFailure = $('#lobby .levelFailure'),
+		$tasksSolved = $('#lobby .tasksSolved'),
 		$storyTitle = $('#lobby .storyTitle'),
 		$levelTitle = $('#lobby .levelTitle'),
 		$levelText = $('#lobby .levelText .content'),
@@ -47,9 +49,15 @@ $(function () {
 		$gameKeyboardButtons = $('#game .keyboard .button'),
 		$lobbySettings = $('#lobby .settings'),
 		$settingsKeyboard = $('#settings .keyboardToggle'),
+		$settingsSounds = $('#settings .soundsToggle'),
 		$settingsNick = $('#settings .nickname'),
 		$countdown = $('#game .countdown'),
 		$settingsBack = $('#settings .back');
+	function playSound(name){
+		if (playSounds === true) {
+			//play
+		}
+	}
 	$("form").submit(function(event) {
 		event.preventDefault();
 	});
@@ -58,6 +66,12 @@ $(function () {
 			$gameRoom.addClass('hideKeyboard');
 		} else {
 			$settingsKeyboard.addClass('selected');
+		}
+		if (localStorage.playSounds == 'true') {
+			playSounds = true;
+			$settingsSounds.addClass('selected');
+		} else {
+			playSounds = false;
 		}
 		if (localStorage.nick) {
 			nick = localStorage.nick;
@@ -87,6 +101,17 @@ $(function () {
 		}
 		if(typeof(Storage)!=="undefined") {
 			localStorage.hideKeyboard = $gameRoom.hasClass('hideKeyboard');
+		}
+	});
+	$settingsSounds.click(function() {
+		playSounds = !playSounds;
+		if (playSounds === true) {
+			$settingsSounds.addClass('selected');
+		} else {
+			$settingsSounds.removeClass('selected');
+		}
+		if(typeof(Storage)!=="undefined") {
+			localStorage.playSounds = playSounds;
 		}
 	});
 	function showRoom($room) {
@@ -138,6 +163,7 @@ $(function () {
 	function onGameEnd(data){
 		$failureText.html(data.t);
 		$levelFailure.text(data.l);
+		$tasksSolved.text(data.s);
 		$failureWrapper.addClass('show');
 	}
 	function onCountDown(data){
@@ -221,7 +247,6 @@ $(function () {
 	}
 	function onNotReady(data){
 		$lobbyReadyCount.text('('+data.y+'/'+data.t+')');
-		console.log('loop start');
 		$lobbyStatsList.children('div').each(function(){
 			var $this = $(this);
 			if ($.inArray($this.data('id'),data.nId) !== -1) {
@@ -288,9 +313,11 @@ $(function () {
 		if (data === true) {
 			$gameRoom.removeClass('right');
 			$gameRoom.addClass('wrong');
+			playSound('fail');
 		} else {
 			$gameRoom.removeClass('wrong');
 			$gameRoom.addClass('right');
+			playSound('success');
 		}
 	}
 	function onLoading(data){

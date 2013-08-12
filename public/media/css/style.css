@@ -295,7 +295,8 @@ body, input, textarea {
 .stats {
 	padding-bottom: 10px;
 }
-.stats .levelFailure {
+.stats .levelFailure,
+.stats .tasksSolved {
 	font-weight: bold;
 }
 .stats > .titles {

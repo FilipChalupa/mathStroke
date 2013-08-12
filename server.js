@@ -56,7 +56,8 @@ var socket,
 	story,
 	gameRunning = false,
 	taskIndex = 0,
-	findFreeSolutionTries = 0;
+	findFreeSolutionTries = 0,
+	tasksSolved = 0;
 function getRandomInInterval(first,last){
 	return first+Math.floor(Math.random()*((last-first)+1));
 }
@@ -429,13 +430,14 @@ function getStats(){
 }
 function gameEnd(){
 	util.log('Game over');
-	socket.sockets.emit('game end',{l: level, t:story.levels.failure});
+	socket.sockets.emit('game end',{l: level, t:story.levels.failure, s: tasksSolved});
 	socket.sockets.emit('stats',getStats());
 	setNewGame();
 }
 function setNewGame(){
 	level = 1;
 	taskLastId = 0;
+	tasksSolved = 0;
 	story = stories[Math.floor(Math.random() * stories.length)];
 	for (var player in players) {
 		players[player].ready = false;
@@ -461,6 +463,9 @@ function setNextLevel(){
 	for (var id in players) {
 		players[id].ready = false;
 	}
+	if (level !== 1) {
+		socket.sockets.emit('stats',getStats());
+	}
 	socket.sockets.emit('new level',getNewLevelData());
 	socket.sockets.emit('not ready', countReadyPlayers());
 
@@ -472,10 +477,6 @@ function setNextLevel(){
 	tasksSpaceI = 0;
 	gameRunning = true;
 	taskIndex = 0;
-
-	if (level !== 1) {
-		socket.sockets.emit('stats',getStats());
-	}
 }
 function sendTaskForm(id){
 	return {
@@ -567,6 +568,7 @@ function onSolution(data){
 		for (var id in runningTasks) {
 			if (players[this.id].reloadCountdown === 0 && runningTasks[id].solution == data) {
 				remainingTasks--;
+				tasksSolved++;
 				delete runningTasks[id];
 				socket.sockets.emit('solved', {i: id,n: players[this.id].nick});
 				isWrong = false;
