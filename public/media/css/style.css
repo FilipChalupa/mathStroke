@@ -132,7 +132,7 @@ body, input, textarea {
 	position: relative;
 	max-width: 500px;
 	margin: 0 auto;
-	border: 1px solid white;
+	border: 1px solid #828282;
 	color: white;
 	transition: color .2s, background-color .2s, box-shadow .2s, opacity .4s;
 	-webkit-transition: color .2s, background-color .2s, box-shadow .2s, opacity .4s;
@@ -171,6 +171,7 @@ body, input, textarea {
 .task .player {
 	line-height: 20px;
 	height: 20px;
+	color: #828282;
 }
 .task.danger .time {
 	background-color: black;
@@ -179,7 +180,7 @@ body, input, textarea {
 	color: rgba(255,255,255,0.3);
 }
 .task.solved {
-	border-color: rgba(255,255,255,0.3);
+	border-color: #2C2C2C;
 }
 .roomTitle {
 	font-size: 30px;

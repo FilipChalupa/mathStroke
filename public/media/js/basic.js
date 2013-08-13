@@ -185,8 +185,10 @@ $(function () {
 		$countdown.text(data);
 		if (data === 0) {
 			$countdown.addClass('hide');
+			playSound('start');
 		} else {
 			$countdown.removeClass('hide');
+			playSound('countdown');
 		}
 	}
 	function onStats(data) {
@@ -231,6 +233,7 @@ $(function () {
 		});
 	}
 	function onNewLevel(data){
+		playSound('finish');
 		if (nick == '') {
 			showRoom($settingsRoom);
 		} else {
