@@ -54,10 +54,25 @@ $(function () {
 		$countdown = $('#game .countdown'),
 		$settingsBack = $('#settings .back');
 	function playSound(name){
-		if (playSounds === true) {
-			//play
+		if (playSounds === true && audios[name]) {
+			audios[name].play();
 		}
 	}
+	var audios = {};
+	$('#audio audio').each(function(){
+		var $this = $(this);
+		audios[$this.data('name')] = $this.get(0);
+		$(audios[$this.data('name')]).bind('ended',function(){
+			audios[$this.data('name')].pause();
+			audios[$this.data('name')].currentTime = 0;
+			// chrome temporary fix START
+				if(/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())){
+					audios[$this.data('name')].load();
+				}
+			// chrome temporary fix END
+		});
+
+	});
 	$("form").submit(function(event) {
 		event.preventDefault();
 	});
