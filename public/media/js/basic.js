@@ -139,7 +139,7 @@ $(function () {
 		$messagesRoom.children('.'+message).addClass('show');
 	}
 	function connect() {
-		socket = io.connect("http://192.168.1.230", {port: 80, transports: ["websocket"]});
+		socket = io.connect("http://192.168.1.7", {port: 80, transports: ["websocket"]});
 		setEventHandlers();
 	};
 	var setEventHandlers = function() {
