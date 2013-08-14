@@ -6,7 +6,7 @@ var http = require("http"),
 	url = require("url"),
 	path = require("path"),
 	fs = require("fs"),
-	fs = require("fs"),
+	mime = require("mime"),
 	port = process.argv[2] || /*80*/80;
  
 var server = http.createServer(function(request, response) {
