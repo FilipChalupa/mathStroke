@@ -350,7 +350,7 @@ function onNewPlayer(data){
 		right: 0,
 		wrong: 0
 	};
-	util.log('New player (id: '+playerLastId.id+')');
+	util.log('New player (id: '+playerLastId+')');
 	socket.sockets.socket(this.id).emit('player id', playerLastId);
 	socket.sockets.emit('player new',{i: playerLastId, n: players[this.id].nick});
 	if (inLobby === true) {
