@@ -367,7 +367,7 @@ function onNewPlayer(data){
 function onPlayerUpdate(data){
 	players[this.id].nick = safeNick(data.nick);
 	socket.sockets.emit('nick update',{i: players[this.id].id, n: players[this.id].nick});
-	util.log('Player changed name to '+players[this.id].nick+' (id: '+players[this.id].id+'');
+	util.log('Player changed name to '+players[this.id].nick+' (id: '+players[this.id].id+')');
 }
 function onPlayerDisconnect(){
 	util.log(players[this.id].nick+' disconnected (id: '+players[this.id].id+')');
