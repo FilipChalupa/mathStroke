@@ -341,7 +341,6 @@ var safeNick = function(string, reverse){
 	return string;
 };
 function onNewPlayer(data){
-	util.log('New player (ID: '+this.id+')');
 	playerLastId++;
 	players[this.id] = {
 		id: playerLastId,
@@ -351,6 +350,7 @@ function onNewPlayer(data){
 		right: 0,
 		wrong: 0
 	};
+	util.log('New player (id: '+playerLastId.id+')');
 	socket.sockets.socket(this.id).emit('player id', playerLastId);
 	socket.sockets.emit('player new',{i: playerLastId, n: players[this.id].nick});
 	if (inLobby === true) {
@@ -367,9 +367,10 @@ function onNewPlayer(data){
 function onPlayerUpdate(data){
 	players[this.id].nick = safeNick(data.nick);
 	socket.sockets.emit('nick update',{i: players[this.id].id, n: players[this.id].nick});
+	util.log('Player changed name to '+players[this.id].nick+' (id: '+players[this.id].id+'');
 }
 function onPlayerDisconnect(){
-	util.log('Player disconnected (ID: '+this.id+')');
+	util.log(players[this.id].nick+' disconnected (id: '+players[this.id].id+')');
 	socket.sockets.emit('player gone',players[this.id].id);
 	delete players[this.id];
 	checkReady();
@@ -501,6 +502,7 @@ function startLevel(){
 		} else {
 			countDown--;
 			socket.sockets.emit('countdown', countDown);
+			util.log('Countdown: '+countDown);
 		}
 	},1000);
 
@@ -531,6 +533,7 @@ function startGameLoop(){
 						timeEnd: time + newTask.time
 
 					};
+					util.log('New task: '+newTask.display+' = '+newTask.solution);
 					socket.sockets.emit('new task', sendTaskForm(taskLastId));
 				}
 			} else {
@@ -571,6 +574,7 @@ function onSolution(data){
 			if (players[this.id].reloadCountdown === 0 && runningTasks[id].solution == data) {
 				remainingTasks--;
 				tasksSolved++;
+				util.log(players[this.id].nick+' solved task '+runningTasks[id].display);
 				delete runningTasks[id];
 				socket.sockets.emit('solved', {i: id,n: players[this.id].nick});
 				isWrong = false;
