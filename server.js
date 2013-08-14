@@ -12,7 +12,7 @@ var http = require("http"),
 var server = http.createServer(function(request, response) {
 	var uri = '/public'+url.parse(request.url).pathname,
 		filename = path.join(process.cwd(), uri);
-	path.exists(filename, function(exists) {
+	fs.exists(filename, function(exists) {
 		if(!exists) {
 			util.log('Request '+uri+' (404)');
 			response.writeHead(404, {"Content-Type": "text/plain"});
