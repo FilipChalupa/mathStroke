@@ -1,13 +1,12 @@
 var util = require("util"),
 	io = require("socket.io");
 
-
 var http = require("http"),
 	url = require("url"),
 	path = require("path"),
 	fs = require("fs"),
 	mime = require("mime"),
-	port = process.argv[2] || /*80*/80;
+	port = process.argv[2] || 8080;
  
 var server = http.createServer(function(request, response) {
 	var uri = '/public'+url.parse(request.url).pathname,
@@ -31,12 +30,14 @@ var server = http.createServer(function(request, response) {
 		}
 			util.log('Request '+uri+' (200)');
 			response.writeHead(200, {"Content-Type": mime.lookup(filename)});
+			if (uri == '/public/media/js/basic.js') {
+				file = file.replace('{{server_port}}',port);
+			}
 			response.write(file, "binary");
 			response.end();
 		});
 	});
 });
-util.log("Static file server running at http://localhost:" + port + "/");
 
 function init() {
 	players = [];
@@ -49,7 +50,7 @@ function init() {
 	setNewGame();
 };
 server.listen(parseInt(port, 10));
-
+util.log("Server running at port " + port);
 
 
 var socket,
@@ -533,7 +534,7 @@ function startGameLoop(){
 						timeEnd: time + newTask.time
 
 					};
-					util.log('New task: '+newTask.display+' = '+newTask.solution);
+					util.log('New task (id: '+taskLastId+')');
 					socket.sockets.emit('new task', sendTaskForm(taskLastId));
 				}
 			} else {
@@ -574,7 +575,7 @@ function onSolution(data){
 			if (players[this.id].reloadCountdown === 0 && runningTasks[id].solution == data) {
 				remainingTasks--;
 				tasksSolved++;
-				util.log(players[this.id].nick+' solved task '+runningTasks[id].display);
+				util.log(players[this.id].nick+' solved task (id: '+id+')');
 				delete runningTasks[id];
 				socket.sockets.emit('solved', {i: id,n: players[this.id].nick});
 				isWrong = false;
