@@ -87,11 +87,9 @@ function updateVotesGameType(){
 		votesGameType[key] = 0;
 	}
 	var countPlayers = 0;
-			util.log('start');
 	for (var id in players) {
 		if (typeof votesGameType[players[id].gametype] !== 'undefined') {
 			votesGameType[players[id].gametype]++;
-			util.log(players[id].gametype);
 		}
 		countPlayers++;
 	}
