@@ -75,35 +75,48 @@ function getRandomInInterval(first,last){
 	return first+Math.floor(Math.random()*((last-first)+1));
 }
 function getTask(type,difficulty){
-	var task, solution, x, y, tempA, tempB;
+	var task, solution, x, y, tempA, tempB, tempC;
 	switch (type) {
 		case 'x+y':
 			switch (difficulty) {
 				case 1:
-					solution = getRandomInInterval(1,9);
-					x = getRandomInInterval(0,solution);
-					y = solution-x;
+					tempA = getRandomInInterval(1,9);
+					x = getRandomInInterval(0,tempA);
+					y = tempA-x;
 					break;
 				case 2:
-					solution = getRandomInInterval(0,9);
-					x = getRandomInInterval(0,solution);
-					y = solution-x;
 					tempA = getRandomInInterval(1,9);
-					tempB = getRandomInInterval(0,tempA);
-					y = (tempA-tempB)*10+y;
-					x = tempB*10+x;
+					x = getRandomInInterval(0,tempA);
+					y = tempA-x;
+					tempA = getRandomInInterval(2,9);
+					tempB = getRandomInInterval(1,tempA-1);
+					x += 10*tempB;
+					y += 10*(tempA-tempB);
 					break;
 				case 3:
-					if (Math.random() < 0.2) {
-						x = getRandomInInterval(1,4);
-					} else {
-						x = getRandomInInterval(5,9);
-					}
-					y = getRandomInInterval(10-x,9);
-					tempA = getRandomInInterval(0,8);
-					tempB = getRandomInInterval(0,8-tempA);
-					x = tempA*10+x;
-					y = tempB*10+y;
+					tempA = getRandomInInterval(1,9);
+					x = getRandomInInterval(10-tempA,9);
+					y = tempA;
+					tempA = getRandomInInterval(2,8);
+					tempB = getRandomInInterval(1,tempA-1);
+					x += 10*tempB;
+					y += 10*(tempA-tempB);
+					break;
+				case 4:
+					tempA = getRandomInInterval(1,9);
+					x = getRandomInInterval(0,tempA);
+					y = tempA-x;
+					tempA = getRandomInInterval(2,9);
+					x += 10*tempA;
+					y += 10*getRandomInInterval(11-tempA,9);
+					break;
+				case 5:
+					tempA = getRandomInInterval(1,9);
+					x = getRandomInInterval(10-tempA,9);
+					y = tempA;
+					tempA = getRandomInInterval(2,9);
+					x += 10*tempA;
+					y += 10*getRandomInInterval(11-tempA,9);
 					break;
 			}
 			task = x+' + '+y;
@@ -113,21 +126,34 @@ function getTask(type,difficulty){
 			switch (difficulty) {
 				case 1:
 					x = getRandomInInterval(1,9);
-					y = getRandomInInterval(0,x);
+					y = getRandomInInterval(1,x);
 					break;
 				case 2:
-					tempA = getRandomInInterval(1,9);
-					tempB = getRandomInInterval(1,9);
-					y = getRandomInInterval(0,tempA);
-					x = tempA+tempB*10;
-					y += 10*getRandomInInterval(0,tempB);
+					y = getRandomInInterval(2,9);
+					x = getRandomInInterval(1,y-1);
+					x += 10*getRandomInInterval(1,9);
 					break;
 				case 3:
-					tempA = getRandomInInterval(0,8);
-					tempB = getRandomInInterval(1,9);
-					y = getRandomInInterval(tempA+1,9);
-					x = tempA+tempB*10;
-					y += 10*getRandomInInterval(0,tempB-1);
+					x = getRandomInInterval(2,9);
+					y = getRandomInInterval(1,x-1);
+					tempA = getRandomInInterval(1,9);
+					tempB = getRandomInInterval(1,tempA);
+					x += 10*tempA;
+					y += 10*tempB;
+					break;
+				case 4:
+					y = getRandomInInterval(2,9);
+					x = getRandomInInterval(1,y-1);
+					tempA = getRandomInInterval(2,5);
+					x += 10*tempA;
+					y += 10*(tempA-1);
+					break;
+				case 5:
+					y = getRandomInInterval(2,9);
+					x = getRandomInInterval(1,y-1);
+					tempA = getRandomInInterval(5,9);
+					x += 10*tempA;
+					y += 10*(getRandomInInterval(1,tempA-2));
 					break;
 			}
 			task = x+' - '+y;
@@ -140,16 +166,60 @@ function getTask(type,difficulty){
 					y = getRandomInInterval(2,5);
 					break;
 				case 2:
-					x = getRandomInInterval(2,10);
-					y = getRandomInInterval(2,10);
+					x = getRandomInInterval(6,10);
+					y = getRandomInInterval(2,5);
 					break;
 				case 3:
-					x = getRandomInInterval(12,15);
-					y = getRandomInInterval(2,9);
+					x = getRandomInInterval(6,9);
+					y = getRandomInInterval(6,9);
 					break;
+				case 4:
+					x = getRandomInInterval(2,5);
+					y = getRandomInInterval(11,15);
+					break;
+				case 5:
+					x = getRandomInInterval(6,9);
+					y = getRandomInInterval(11,15);
+					break;
+			}
+			if (Math.random() < 0.5){
+				tempA = x;
+				x = y;
+				y = tempA;
 			}
 			task = x+' &#215; '+y;
 			solution = x*y;
+			break;
+		case 'x/y':
+			switch (difficulty) {
+				case 1:
+					tempA = getRandomInInterval(2,5);
+					y = getRandomInInterval(2,5);
+					x = tempA*y;
+					break;
+				case 2:
+					tempA = getRandomInInterval(6,9);
+					y = getRandomInInterval(6,9);
+					x = tempA*y;
+					break;
+				case 3:
+					tempA = getRandomInInterval(11,15);
+					y = getRandomInInterval(3,5);
+					x = tempA*y;
+					break;
+				case 4:
+					tempA = getRandomInInterval(11,15);
+					y = getRandomInInterval(6,9);
+					x = tempA*y;
+					break;
+				case 5:
+					tempA = getRandomInInterval(16,19);
+					y = getRandomInInterval(3,5);
+					x = tempA*y;
+					break;
+			}
+			task = x+' &#247; '+y;
+			solution = x/y;
 			break;
 	}
 	var doIt = true;
@@ -171,13 +241,11 @@ function getTask(type,difficulty){
 	};
 }
 /*for (var i = 0; i<=50; i++){
-	var tt = getTask('x+y',1);
+	var tt = getTask('x/y',5);
 	util.log(tt.display+' = '+tt.solution);
 }*/
 var levels = {
 	1: {
-		tasksSpacePlus: 10,
-		tasksSpaceMin: 10,
 		tasks: [
 			{t: 'x+y',d: 1, time: 150, space: 10},
 			{t: 'x+y',d: 1, time: 120, space: 1},
@@ -187,8 +255,6 @@ var levels = {
 		]
 	},
 	2: {
-		tasksSpacePlus: 10,
-		tasksSpaceMin: 5,
 		tasks: [
 			{t: 'x*y',d: 1, time: 150, space: 10},
 			{t: 'x*y',d: 1, time: 120, space: 10},
@@ -208,8 +274,6 @@ var levels = {
 		]
 	},
 	3: {
-		tasksSpacePlus: 5,
-		tasksSpaceMin: 1,
 		tasks: [
 			{t: 'x+y',d: 2, time: 150, space: 10},
 			{t: 'x-y',d: 2, time: 150, space: 10},
@@ -226,8 +290,6 @@ var levels = {
 		]
 	},
 	4: {
-		tasksSpacePlus: 10,
-		tasksSpaceMin: 10,
 		tasks: [
 			{t: 'x-y',d: 2, time: 120, space: 10},
 			{t: 'x-y',d: 2, time: 120, space: 10},
@@ -253,8 +315,6 @@ var levels = {
 		]
 	},
 	5: {
-		tasksSpacePlus: 10,
-		tasksSpaceMin: 10,
 		tasks: [
 			{t: 'x*y',d: 2, time: 120, space: 10},
 			{t: 'x*y',d: 2, time: 120, space: 10},
