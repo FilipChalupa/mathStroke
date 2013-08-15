@@ -212,6 +212,29 @@ body, input, textarea {
 	padding: 5px;
 	border: 3px solid #2C2C2C;
 }
+#lobby .story {
+	display: none;
+}
+#lobby .story.show {
+	display: block;
+}
+#lobby .typeVoting {
+	display: none;
+	max-width: 266px;
+	margin: 0 auto;
+}
+#lobby .typeVoting.show {
+	display: block;
+}
+#lobby .typeVoting .button {
+	float: left;
+	width: 95px;
+}
+#lobby .typeVoting .divider {
+	float: left;
+	width: 4px;
+	height: 4px;
+}
 #lobby .levelTitle {
 	font-size: 22px;
 	padding: 5px;

@@ -30,11 +30,13 @@ $(function () {
 		$levelFailure = $('#lobby .levelFailure'),
 		$tasksSolved = $('#lobby .tasksSolved'),
 		$storyTitle = $('#lobby .storyTitle'),
+		$storyWrapper = $('#lobby .story'),
 		$levelTitle = $('#lobby .levelTitle'),
 		$levelText = $('#lobby .levelText .content'),
 		$failureText = $('#lobby .textFailure'),
 		$failureWrapper = $('#lobby .failure'),
 		$lobbyRoom = $('#lobby'),
+		$lobbyVoting = $('#lobby .typeVoting'),
 		$gameRoom = $('#game'),
 		$settingsRoom = $('#settings'),
 		$gameTasks = $('#game .tasks'),
@@ -161,11 +163,28 @@ $(function () {
 		socket.on("player gone", onPlayerGone);
 		socket.on("player new", onPlayerNew);
 		socket.on("nick update", onNickUpdate);
+		socket.on("votes gametype", onVoteGametype);
 		socket.on("test", test);
 	};
 	function test(data){
 		alert(data);
 	}
+	function onVoteGametype(data){
+		$lobbyVoting.addClass('show');
+		$lobbyVoting.children('.button').each(function(){
+			var $this = $(this);
+			if (data[$this.data('type')] == 0) {
+				$this.removeClass('selected');
+			}
+			$this.children('span').text(data[$this.data('type')]);
+		});
+	}
+	$lobbyVoting.on('click','.button',function(){
+		var $this = $(this);
+		$lobbyVoting.children('.button').removeClass('selected');
+		$this.addClass('selected');
+		socket.emit("vote gametype", $this.data('type'));
+	});
 	function onSocketDisconnect() {
 		showMessageRoom('reconnect');
 	};
@@ -246,8 +265,13 @@ $(function () {
 		$gameTasks.html('');
 		$level.text(level);
 		$storyTitle.html(data.st);
-		$levelTitle.html(data.lt);
-		$levelText.html(data.lx);
+		if (data.gt == 'story') {
+			$storyWrapper.addClass('show');
+			$levelTitle.html(data.lt);
+			$levelText.html(data.lx);
+		} else {
+			$storyWrapper.removeClass('show');
+		}
 		$lobbyReadyButton.removeClass('selected');
 		$gameRoom.removeClass('wrong');
 		$gameRoom.removeClass('right');
@@ -261,6 +285,8 @@ $(function () {
 		level = data;
 		inLobby = false;
 		$failureWrapper.removeClass('show');
+		$lobbyVoting.removeClass('show');
+		$lobbyVoting.children('.button').removeClass('selected');
 		showRoom($gameRoom);
 	}
 	function onNotReady(data){

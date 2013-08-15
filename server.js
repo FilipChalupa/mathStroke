@@ -61,16 +61,48 @@ var socket,
 	playerLastId = 0,
 	remainingTasks = 0,
 	inLobby = true,
+	gameType = 'sprint',
+	votesGameType = {
+		'story': 0,
+		'sprint': 0
+	},
+	sprintTitle = 'Sprint!',
 	gameLoop,
 	tasksSpaceI = 0,
 	reloadCountdown = 2,
-	recoverReloadCountDown = 10,
+	recoverReloadCountdown = 10,
 	stories = [],
 	story,
 	gameRunning = false,
 	taskIndex = 0,
 	findFreeSolutionTries = 0,
 	tasksSolved = 0;
+
+function onVoteGameType(data) {
+	players[this.id].gametype = data;
+	updateVotesGameType();
+}
+function updateVotesGameType(){
+	for (var key in votesGameType) {
+		votesGameType[key] = 0;
+	}
+	var countPlayers = 0;
+			util.log('start');
+	for (var id in players) {
+		if (typeof votesGameType[players[id].gametype] !== 'undefined') {
+			votesGameType[players[id].gametype]++;
+			util.log(players[id].gametype);
+		}
+		countPlayers++;
+	}
+	for (var key in votesGameType) {
+		if (votesGameType[key] === countPlayers) {
+			gameType = key;
+			setNewGame();
+		}
+	}
+	socket.sockets.emit('votes gametype',votesGameType);
+}
 function getRandomInInterval(first,last){
 	return first+Math.floor(Math.random()*((last-first)+1));
 }
@@ -247,7 +279,7 @@ function getTask(type,difficulty){
 var levels = {
 	1: {
 		tasks: [
-			{t: 'x+y',d: 1, time: 150, space: 10},
+			{t: 'x*y',d: 1, time: 150, space: 10},
 			{t: 'x+y',d: 1, time: 120, space: 1},
 			{t: 'x+y',d: 2, time: 150, space: 10},
 			{t: 'x+y',d: 2, time: 120, space: 1},
@@ -372,6 +404,7 @@ function onSocketConnection(client) {
 	client.on("new player", onNewPlayer);
 	client.on("player update", onPlayerUpdate);
 	client.on("ready", onPlayerReady);
+	client.on("vote gametype", onVoteGameType);
 	client.on("solution", onSolution);
 };
 var safeNick = function(string, reverse){
@@ -409,12 +442,14 @@ function onNewPlayer(data){
 		ready: false,
 		reloadCountdown: 0,
 		right: 0,
-		wrong: 0
+		wrong: 0,
+		gametype: ''
 	};
 	util.log('New player (id: '+playerLastId+')');
 	socket.sockets.socket(this.id).emit('player id', playerLastId);
 	socket.sockets.emit('player new',{i: playerLastId, n: players[this.id].nick});
 	if (inLobby === true) {
+		socket.sockets.socket(this.id).emit('votes gametype',votesGameType);
 		socket.sockets.socket(this.id).emit('new level', getNewLevelData());
 		socket.sockets.socket(this.id).emit('stats',getStats());
 		socket.sockets.emit('not ready', countReadyPlayers());
@@ -434,6 +469,7 @@ function onPlayerDisconnect(){
 	util.log(players[this.id].nick+' disconnected (id: '+players[this.id].id+')');
 	socket.sockets.emit('player gone',players[this.id].id);
 	delete players[this.id];
+	updateVotesGameType();
 	checkReady();
 }
 function checkReady(){
@@ -507,20 +543,28 @@ function setNewGame(){
 		players[player].ready = false;
 		players[player].right = 0;
 		players[player].wrong = 0;
+		players[player].gametype = '';
+	}
+	for (var key in votesGameType) {
+		votesGameType[key] = 0;
 	}
 	setNextLevel();
 }
 function getNewLevelData(){
-	var levelTitle = '',
-		levelText = '';
-	if (story.levels[level]) {
-		levelTitle = story.levels[level].title;
-		levelText = story.levels[level].text;
-	} else {
-		levelTitle = story.levels.end.title;
-		levelText = story.levels.end.text;
+	if (gameType === 'story') {
+		var levelTitle = '',
+			levelText = '';
+		if (story.levels[level]) {
+			levelTitle = story.levels[level].title;
+			levelText = story.levels[level].text;
+		} else {
+			levelTitle = story.levels.end.title;
+			levelText = story.levels.end.text;
+		}
+		return {gt: gameType, l: level,st: story.title,lt: levelTitle,lx: levelText};
+	} else if (gameType === 'sprint') {
+		return {gt: gameType, l: level,st: sprintTitle};
 	}
-	return {l: level,st: story.title,lt: levelTitle,lx: levelText};
 }
 function setNextLevel(){
 	inLobby = true;
@@ -529,6 +573,8 @@ function setNextLevel(){
 	}
 	if (level !== 1) {
 		socket.sockets.emit('stats',getStats());
+	} else {
+		socket.sockets.emit('votes gametype',votesGameType);
 	}
 	socket.sockets.emit('new level',getNewLevelData());
 	socket.sockets.emit('not ready', countReadyPlayers());
@@ -580,7 +626,7 @@ function startGameLoop(){
 				setNextLevel();
 			},2000);
 		} else {
-			if (tasksSpaceI === 0 || countArray(runningTasks) < countArray(players)) {
+			if (tasksSpaceI === 0 || countArray(runningTasks) === 0 || (gameType === 'story' && countArray(runningTasks) < countArray(players))) {
 				if (countArray(runningTasks) < remainingTasks) {
 					var newTask = getTask(levels[level].tasks[taskIndex].t,levels[level].tasks[taskIndex].d);
 					newTask.time = levels[level].tasks[taskIndex].time;
@@ -594,6 +640,11 @@ function startGameLoop(){
 						timeEnd: time + newTask.time
 
 					};
+					if (gameType === 'sprint') {
+						runningTasks[taskLastId].type = levels[level].tasks[taskIndex-1].t;
+						runningTasks[taskLastId].difficulty = levels[level].tasks[taskIndex-1].d;
+						tasksSpaceI = runningTasks[taskLastId].timeLifespan;
+					}
 					util.log('New task (id: '+taskLastId+')');
 					socket.sockets.emit('new task', sendTaskForm(taskLastId));
 				}
@@ -642,7 +693,11 @@ function onSolution(data){
 			}
 		}
 		if (isWrong) {
-			players[this.id].reloadCountdown = recoverReloadCountDown;
+			if (gameType === 'sprint') {
+				players[this.id].reloadCountdown = reloadCountdown;
+			} else {
+				players[this.id].reloadCountdown = recoverReloadCountdown;
+			}
 			players[this.id].wrong++;
 		} else {
 			players[this.id].reloadCountdown = reloadCountdown;
