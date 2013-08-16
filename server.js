@@ -79,8 +79,10 @@ var socket,
 	tasksSolved = 0;
 
 function onVoteGameType(data) {
-	players[this.id].gametype = data;
-	updateVotesGameType();
+	if (level === 1) {
+		players[this.id].gametype = data;
+		updateVotesGameType();
+	}
 }
 function updateVotesGameType(){
 	for (var key in votesGameType) {
@@ -94,9 +96,11 @@ function updateVotesGameType(){
 		countPlayers++;
 	}
 	for (var key in votesGameType) {
-		if (votesGameType[key] === countPlayers) {
-			gameType = key;
-			setNewGame();
+		if (votesGameType[key] > countPlayers/2) {
+			if (gameType !== key) {
+				gameType = key;
+				setNewGame();
+			}
 		}
 	}
 	socket.sockets.emit('votes gametype',votesGameType);
