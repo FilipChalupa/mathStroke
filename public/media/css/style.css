@@ -228,11 +228,13 @@ body, input, textarea {
 }
 #lobby .typeVoting .button {
 	float: left;
-	width: 95px;
+	width: 90px;
+	margin-top: 0;
+	margin-bottom: 0;
 }
 #lobby .typeVoting .divider {
 	float: left;
-	width: 4px;
+	width: 14px;
 	height: 4px;
 }
 #lobby .levelTitle {

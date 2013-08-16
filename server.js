@@ -7,7 +7,8 @@ var http = require("http"),
 	fs = require("fs"),
 	mime = require("mime"),
 	port = process.argv[2] || 8080;
- 
+
+
 var server = http.createServer(function(request, response) {
 	var uri = '/public'+url.parse(request.url).pathname,
 		filename = path.join(process.cwd(), uri);
@@ -39,75 +40,74 @@ var server = http.createServer(function(request, response) {
 	});
 });
 
-function init() {
-	players = [];
-	socket = io.listen(server);
-	socket.configure(function() {
-		socket.set("transports", ["websocket"]);
-		socket.set("log level", 2);
+var tasksFilePath = __dirname+'/tasks.json',
+	tasksHolder = [];
+for (var i=1; i<=5;i++){
+	tasksHolder.push({
+		type: 'x+y',
+		version: i,
+		difficulty: i
 	});
-	setEventHandlers();
-	setNewGame();
-};
-server.listen(parseInt(port, 10));
-util.log("Server running at port " + port);
-
-
-var socket,
-	players = [],
-	level = 1,
-	runningTasks = [],
-	taskLastId = 0,
-	playerLastId = 0,
-	remainingTasks = 0,
-	inLobby = true,
-	gameType = 'sprint',
-	votesGameType = {
-		'story': 0,
-		'sprint': 0
-	},
-	sprintTitle = 'Sprint!',
-	gameLoop,
-	tasksSpaceI = 0,
-	reloadCountdown = 2,
-	recoverReloadCountdown = 10,
-	stories = [],
-	story,
-	gameRunning = false,
-	taskIndex = 0,
-	findFreeSolutionTries = 0,
-	tasksSolved = 0;
-
-function onVoteGameType(data) {
-	if (level === 1) {
-		players[this.id].gametype = data;
-		updateVotesGameType();
-	}
+	tasksHolder.push({
+		type: 'x-y',
+		version: i,
+		difficulty: i
+	});
+	tasksHolder.push({
+		type: 'x*y',
+		version: i,
+		difficulty: i
+	});
+	tasksHolder.push({
+		type: 'x/y',
+		version: i,
+		difficulty: i
+	});
 }
-function updateVotesGameType(){
-	for (var key in votesGameType) {
-		votesGameType[key] = 0;
+function sortTasksHolder(){
+	tasksHolder.sort(function(a, b) { 
+		return a.difficulty - b.difficulty;
+	});
+}
+sortTasksHolder();
+fs.readFile(tasksFilePath, 'utf8', function (err, data) {
+	if (err) {
+		util.log('Error: ' + err);
+		return;
 	}
-	var countPlayers = 0;
-	for (var id in players) {
-		if (typeof votesGameType[players[id].gametype] !== 'undefined') {
-			votesGameType[players[id].gametype]++;
-		}
-		countPlayers++;
+	try {
+		data = JSON.parse(data);
+		setDifficulty(data);
+	} catch (e) {
+		data = {};
+		util.log(e);
 	}
-	for (var key in votesGameType) {
-		if (votesGameType[key] > countPlayers/2) {
-			if (gameType !== key) {
-				gameType = key;
-				setNewGame();
-			}
+});
+function setDifficulty(data){
+	for (var i in tasksHolder) {
+		var type = tasksHolder[i].type;
+		if (typeof data[type] !== 'undefined'
+			&& data[type].hasOwnProperty(tasksHolder[i].version)) {
+			tasksHolder[i].difficulty = data[type][tasksHolder[i].version];
 		}
 	}
-	socket.sockets.emit('votes gametype',votesGameType);
+	sortTasksHolder();
 }
-function getRandomInInterval(first,last){
-	return first+Math.floor(Math.random()*((last-first)+1));
+function saveDifficulty(){
+	var answer = {};
+	for (var i in tasksHolder) {
+		if (typeof answer[tasksHolder[i].type] !== 'object') {
+			answer[tasksHolder[i].type] = {};
+		}
+		answer[tasksHolder[i].type][tasksHolder[i].version] = ''+tasksHolder[i].difficulty;
+	}
+	fs.writeFile(tasksFilePath,JSON.stringify(answer));
 }
+//saveDifficulty();
+/*for (var i=0;i<20;i++) {
+	var tasci = getTask(tasksHolder[i].type,tasksHolder[i].version);
+	util.log(tasci.display+' = '+tasci.solution);
+}*/
 function getTask(type,difficulty){
 	var task, solution, x, y, tempA, tempB, tempC;
 	switch (type) {
@@ -274,6 +274,242 @@ function getTask(type,difficulty){
 		solution: solution
 	};
 }
+function init() {
+	players = [];
+	socket = io.listen(server);
+	socket.configure(function() {
+		socket.set("transports", ["websocket"]);
+		socket.set("log level", 2);
+	});
+	setEventHandlers();
+	setNewGame();
+};
+server.listen(parseInt(port, 10));
+util.log("Server running at port " + port);
+
+
+var socket,
+	players = [],
+	level = 1,
+	runningTasks = [],
+	taskLastId = 0,
+	playerLastId = 0,
+	remainingTasks = 0,
+	inLobby = true,
+	gameType = 'story',
+	votesGameType = {
+		'story': 0,
+		'sprint': 0
+	},
+	sprintTitle = 'Sprint!',
+	gameLoop,
+	tasksSpaceI = 0,
+	reloadCountdown = 2,
+	recoverReloadCountdown = 10,
+	stories = [],
+	story,
+	gameRunning = false,
+	taskIndex = 0,
+	findFreeSolutionTries = 0,
+	tasksSolved = 0;
+
+function onVoteGameType(data) {
+	if (level === 1) {
+		players[this.id].gametype = data;
+		updateVotesGameType();
+	}
+}
+function updateVotesGameType(){
+	for (var key in votesGameType) {
+		votesGameType[key] = 0;
+	}
+	var countPlayers = 0;
+	for (var id in players) {
+		if (typeof votesGameType[players[id].gametype] !== 'undefined') {
+			votesGameType[players[id].gametype]++;
+		}
+		countPlayers++;
+	}
+	for (var key in votesGameType) {
+		if (votesGameType[key] > countPlayers/2) {
+			if (gameType !== key) {
+				gameType = key;
+				util.log('Game mode changed to '+gameType);
+				setNewGame();
+			}
+		}
+	}
+	socket.sockets.emit('votes gametype',votesGameType);
+}
+function getRandomInInterval(first,last){
+	return first+Math.floor(Math.random()*((last-first)+1));
+}
+/*function getTask(type,difficulty){
+	var task, solution, x, y, tempA, tempB, tempC;
+	switch (type) {
+		case 'x+y':
+			switch (difficulty) {
+				case 1:
+					tempA = getRandomInInterval(1,9);
+					x = getRandomInInterval(0,tempA);
+					y = tempA-x;
+					break;
+				case 2:
+					tempA = getRandomInInterval(1,9);
+					x = getRandomInInterval(0,tempA);
+					y = tempA-x;
+					tempA = getRandomInInterval(2,9);
+					tempB = getRandomInInterval(1,tempA-1);
+					x += 10*tempB;
+					y += 10*(tempA-tempB);
+					break;
+				case 3:
+					tempA = getRandomInInterval(1,9);
+					x = getRandomInInterval(10-tempA,9);
+					y = tempA;
+					tempA = getRandomInInterval(2,8);
+					tempB = getRandomInInterval(1,tempA-1);
+					x += 10*tempB;
+					y += 10*(tempA-tempB);
+					break;
+				case 4:
+					tempA = getRandomInInterval(1,9);
+					x = getRandomInInterval(0,tempA);
+					y = tempA-x;
+					tempA = getRandomInInterval(2,9);
+					x += 10*tempA;
+					y += 10*getRandomInInterval(11-tempA,9);
+					break;
+				case 5:
+					tempA = getRandomInInterval(1,9);
+					x = getRandomInInterval(10-tempA,9);
+					y = tempA;
+					tempA = getRandomInInterval(2,9);
+					x += 10*tempA;
+					y += 10*getRandomInInterval(11-tempA,9);
+					break;
+			}
+			task = x+' + '+y;
+			solution = x+y;
+			break;
+		case 'x-y':
+			switch (difficulty) {
+				case 1:
+					x = getRandomInInterval(1,9);
+					y = getRandomInInterval(1,x);
+					break;
+				case 2:
+					y = getRandomInInterval(2,9);
+					x = getRandomInInterval(1,y-1);
+					x += 10*getRandomInInterval(1,9);
+					break;
+				case 3:
+					x = getRandomInInterval(2,9);
+					y = getRandomInInterval(1,x-1);
+					tempA = getRandomInInterval(1,9);
+					tempB = getRandomInInterval(1,tempA);
+					x += 10*tempA;
+					y += 10*tempB;
+					break;
+				case 4:
+					y = getRandomInInterval(2,9);
+					x = getRandomInInterval(1,y-1);
+					tempA = getRandomInInterval(2,5);
+					x += 10*tempA;
+					y += 10*(tempA-1);
+					break;
+				case 5:
+					y = getRandomInInterval(2,9);
+					x = getRandomInInterval(1,y-1);
+					tempA = getRandomInInterval(5,9);
+					x += 10*tempA;
+					y += 10*(getRandomInInterval(1,tempA-2));
+					break;
+			}
+			task = x+' - '+y;
+			solution = x-y;
+			break;
+		case 'x*y':
+			switch (difficulty) {
+				case 1:
+					x = getRandomInInterval(2,5);
+					y = getRandomInInterval(2,5);
+					break;
+				case 2:
+					x = getRandomInInterval(6,10);
+					y = getRandomInInterval(2,5);
+					break;
+				case 3:
+					x = getRandomInInterval(6,9);
+					y = getRandomInInterval(6,9);
+					break;
+				case 4:
+					x = getRandomInInterval(2,5);
+					y = getRandomInInterval(11,15);
+					break;
+				case 5:
+					x = getRandomInInterval(6,9);
+					y = getRandomInInterval(11,15);
+					break;
+			}
+			if (Math.random() < 0.5){
+				tempA = x;
+				x = y;
+				y = tempA;
+			}
+			task = x+' &#215; '+y;
+			solution = x*y;
+			break;
+		case 'x/y':
+			switch (difficulty) {
+				case 1:
+					tempA = getRandomInInterval(2,5);
+					y = getRandomInInterval(2,5);
+					x = tempA*y;
+					break;
+				case 2:
+					tempA = getRandomInInterval(6,9);
+					y = getRandomInInterval(6,9);
+					x = tempA*y;
+					break;
+				case 3:
+					tempA = getRandomInInterval(11,15);
+					y = getRandomInInterval(3,5);
+					x = tempA*y;
+					break;
+				case 4:
+					tempA = getRandomInInterval(11,15);
+					y = getRandomInInterval(6,9);
+					x = tempA*y;
+					break;
+				case 5:
+					tempA = getRandomInInterval(16,19);
+					y = getRandomInInterval(3,5);
+					x = tempA*y;
+					break;
+			}
+			task = x+' &#247; '+y;
+			solution = x/y;
+			break;
+	}
+	var doIt = true;
+	for (var id in runningTasks) {
+		if (doIt === true && runningTasks[id].solution === solution) {
+			findFreeSolutionTries++;
+			if (findFreeSolutionTries < 10) {
+				return getTask(type,difficulty);
+			} else {
+				doIt = false;
+				util.log('Task with unique solution not found.');
+			}
+		}
+	}
+	findFreeSolutionTries = 0;
+	return {
+		display: task,
+		solution: solution
+	};
+}*/
 /*for (var i = 0; i<=50; i++){
 	var tt = getTask('x/y',5);
 	util.log(tt.display+' = '+tt.solution);
