@@ -301,6 +301,7 @@ var socket,
 		'story': 0,
 		'sprint': 0
 	},
+	basicLevel = 0,
 	sprintTitle = 'Sprint!',
 	sprintData = {},
 	gameLoop,
@@ -444,16 +445,16 @@ stories.push({
 	levels: {
 		1: {
 			title: 'Welcome',
-			text: 'Do the math!'
+			text: '---'
 		},
-		2: {
+		/*2: {
 			title: 'Faster!',
 			text: 'We are running out of time.'
 		},
 		3: {
 			title: 'Turbo',
 			text: 'There is no time to rest'
-		},
+		},*/
 		/*3: {
 			title: 'Harder',
 			text: '<img src="http://library.thinkquest.org/J002596/Calcdude.gif" width="415" height="388"><p>I did the same thing as well, though you do have to be careful sometimes when messing with Array.prototype, especially when using third-party modules.</p><p>I did the same thing as well, though you do have to be careful sometimes when messing with Array.prototype, especially when using third-party modules.</p>'
@@ -612,7 +613,6 @@ function setNewGame(){
 	world = 1;
 	taskLastId = 0;
 	tasksSolved = 0;
-	taskIndex = 1;
 	sprintData = {};
 	story = stories[Math.floor(Math.random() * stories.length)];
 	for (var player in players) {
@@ -662,6 +662,8 @@ function setNextLevel(){
 	time = 0;
 	tasksSpaceI = 0;
 	gameRunning = true;
+	taskIndex = 1;
+	basicLevel = (level-1)%(tasksCount-4);
 }
 function sendTaskForm(id){
 	return {
@@ -701,27 +703,32 @@ function startGameLoop(){
 		} else {
 			if (tasksSpaceI === 0 || countArray(runningTasks) === 0 || (gameType === 'story' && countArray(runningTasks) < countArray(players))) {
 				if (countArray(runningTasks) < remainingTasks) {
-					var harderPlus = 2,
-						basicLevel = (level-1)%(tasksCount-2),
+					var harderPlus = 0,
 						indexInLevel = taskIndex%tasksCount;
-					switch (indexInLevel) {
-						case 1:
-						case 3:
-						case 6:
-						case 7:
-						case 11:
-						case 14:
-						case 17:
-							harderPlus = 0;
-							break;
+					switch (taskIndex) {
 						case 2:
-						case 4:
+						case 3:
 						case 8:
-						case 9:
+						case 14:
+							harderPlus = 1;
+							break;
+						case 5:
+						case 10:
 						case 13:
+						case 17:
+							harderPlus = 2;
+							break;
+						case 6:
+						case 9:
 						case 15:
 						case 19:
-							harderPlus = 1;
+							harderPlus = 3;
+							break;
+						case 11:
+						case 16:
+						case 18:
+						case 0:
+							harderPlus = 4;
 							break;
 					}
 					var typeT = tasksHolder[basicLevel+harderPlus].type,
