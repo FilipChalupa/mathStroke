@@ -28,6 +28,7 @@ $(function () {
 		playSounds = false;
 	var $level = $('#lobby .level'),
 		$levelFailure = $('#lobby .levelFailure'),
+		$timeSaved = $('#lobby .timeSaved'),
 		$tasksSolved = $('#lobby .tasksSolved'),
 		$storyTitle = $('#lobby .storyTitle'),
 		$storyWrapper = $('#lobby .story'),
@@ -198,6 +199,7 @@ $(function () {
 		$failureText.html(data.t);
 		$levelFailure.text(data.l);
 		$tasksSolved.text(data.s);
+		$timeSaved.text(data.n);
 		$failureWrapper.addClass('show');
 	}
 	function onCountDown(data){

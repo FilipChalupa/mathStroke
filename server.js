@@ -8,7 +8,6 @@ var http = require("http"),
 	mime = require("mime"),
 	port = process.argv[2] || 8080;
 
-
 var server = http.createServer(function(request, response) {
 	var uri = '/public'+url.parse(request.url).pathname,
 		filename = path.join(process.cwd(), uri);
@@ -108,7 +107,7 @@ function saveDifficulty(){
 	fs.writeFile(tasksFilePath,JSON.stringify(answer));
 }
 function getTask(type,difficulty){
-	var task, solution, x, y, tempA, tempB, tempC;
+	var task, solution, x, y, nanoS, tempA, tempB, tempC;
 	switch (type) {
 		case 'x+y':
 			switch (difficulty) {
@@ -153,7 +152,9 @@ function getTask(type,difficulty){
 					break;
 			}
 			task = x+' + '+y;
+			nanoS = process.hrtime();
 			solution = x+y;
+			nanoS = process.hrtime(nanoS)[1];
 			break;
 		case 'x-y':
 			switch (difficulty) {
@@ -190,7 +191,9 @@ function getTask(type,difficulty){
 					break;
 			}
 			task = x+' - '+y;
+			nanoS = process.hrtime();
 			solution = x-y;
+			nanoS = process.hrtime(nanoS)[1];
 			break;
 		case 'x*y':
 			switch (difficulty) {
@@ -221,7 +224,9 @@ function getTask(type,difficulty){
 				y = tempA;
 			}
 			task = x+' &#215; '+y;
+			nanoS = process.hrtime();
 			solution = x*y;
+			nanoS = process.hrtime(nanoS)[1];
 			break;
 		case 'x/y':
 			switch (difficulty) {
@@ -252,7 +257,9 @@ function getTask(type,difficulty){
 					break;
 			}
 			task = x+' / '+y;
+			nanoS = process.hrtime();
 			solution = x/y;
+			nanoS = process.hrtime(nanoS)[1];
 			break;
 	}
 	var doIt = true;
@@ -270,7 +277,8 @@ function getTask(type,difficulty){
 	findFreeSolutionTries = 0;
 	return {
 		display: task,
-		solution: solution
+		solution: solution,
+		nanoseconds: nanoS
 	};
 }
 function init() {
@@ -313,6 +321,7 @@ var socket,
 	gameRunning = false,
 	taskIndex = 1,
 	findFreeSolutionTries = 0,
+	timeSaved = 0,
 	tasksSolved = 0,
 	tasksUsed = {
 		0: 0,
@@ -512,7 +521,7 @@ function getStats(){
 }
 function gameEnd(){
 	util.log('Game over');
-	socket.sockets.emit('game end',{l: level, t:story.levels.failure, s: tasksSolved});
+	socket.sockets.emit('game end',{l: level, t:story.levels.failure, s: tasksSolved,n: timeSaved});
 	socket.sockets.emit('stats',getStats());
 	if (gameType === 'sprint') {
 		setDifficulty(sprintData);
@@ -524,6 +533,7 @@ function gameEnd(){
 function setNewGame(){
 	level = 1;
 	world = 1;
+	timeSaved = 0;
 	taskLastId = 0;
 	tasksSolved = 0;
 	sprintData = {};
@@ -651,6 +661,7 @@ function startGameLoop(){
 					var typeT = tasksHolder[basicLevel+harderPlus].type,
 						versionT = tasksHolder[basicLevel+harderPlus].version;
 					var newTask = getTask(typeT,versionT);
+					timeSaved += newTask.nanoseconds;
 					newTask.time = Math.ceil((60/level+80/indexInLevel+70)/world);
 					tasksSpaceI = Math.ceil(newTask.time/(tasksUsed[harderPlus]+2));
 					runningTasks[taskLastId] = {
@@ -658,7 +669,6 @@ function startGameLoop(){
 						solution: newTask.solution,
 						timeLifespan: newTask.time,
 						timeEnd: time + newTask.time
-
 					};
 					if (gameType === 'sprint') {
 						runningTasks[taskLastId].type = typeT;
