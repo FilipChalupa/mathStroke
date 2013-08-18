@@ -153,6 +153,9 @@ body, input, textarea {
 .task .title {
 	padding: 5px;
 }
+.task .title .solution {
+	color: #4C4C4C;
+}
 .task .t_wrapper {
 	padding: 5px;
 }
@@ -177,7 +180,10 @@ body, input, textarea {
 	background-color: black;
 }
 .task.solved .title {
-	color: rgba(255,255,255,0.3);
+	color: #4C4C4C;
+}
+.task.solved .solution {
+	color: inherit;
 }
 .task.solved {
 	border-color: #2C2C2C;
@@ -261,9 +267,6 @@ body, input, textarea {
 	transition: opacity 1s;
 	-webkit-transition: opacity 1s;
 }
-#game.hideKeyboard .countdown {
-	padding-top: 115px;
-}
 #game .countdown.hide {
 	opacity: 0;
 }
@@ -277,8 +280,7 @@ body, input, textarea {
 	padding-bottom: 280px;
 }
 #game.hideKeyboard .tasks  {
-	padding-bottom: 0;
-	padding-top: 80px;
+	padding-bottom: 70px;
 }
 #game .control {
 	position: fixed;
@@ -291,8 +293,6 @@ body, input, textarea {
 }
 #game.hideKeyboard .control {
 	height: 70px;
-		bottom: auto;
-		top: 10px;
 }
 .keyboard {
 	width: 280px;

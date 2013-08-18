@@ -730,8 +730,8 @@ function onSolution(data){
 					/*console.log(sprintData[type][version]);
 					console.log('>>>>>>>');*/
 				}
+				socket.sockets.emit('solved', {i: id,n: players[this.id].nick,s:runningTasks[id].solution});
 				delete runningTasks[id];
-				socket.sockets.emit('solved', {i: id,n: players[this.id].nick});
 				isWrong = false;
 			}
 		}

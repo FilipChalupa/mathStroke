@@ -306,7 +306,7 @@ $(function () {
 			timeLifespan: data.tl,
 			timeEnd: data.te
 		}
-		$gameTasks.append('<div class="task" data-id="'+data.id+'"><div class="title">'+data.d+'</div><div class="t_wrapper"><div class="time"></div></div></div>');
+		$gameTasks.append('<div class="task" data-id="'+data.id+'"><div class="title"><span class="expression">'+data.d+'</span><span class="solution"></span></div><div class="t_wrapper"><div class="time"></div></div></div>');
 		setTimeout(function(){
 			$gameTasks.children('.task').addClass('show');
 		},10);
@@ -332,10 +332,18 @@ $(function () {
 			}
 		});
 	}
+	function setSolution($task,solution){
+		var $title = $task.children('.title');
+		var $expression = $title.children('.expression'),
+			$solution = $title.children('.solution');
+		$solution.html(solution==='' ? '' : '&nbsp;= '+solution);
+		$expression.css('padding-left',$solution.width());
+	}
 	function onSolved(data){
 		$gameTasks.children('.task').each(function(){
 			var $this = $(this);
 			if ($this.data('id') == data.i) {
+				setSolution($this,data.s);
 				$this.addClass('solved').removeClass('danger').append('<div class="player">'+data.n+'</div>').delay(1500).animate({
 					height: "toggle",
 					'margin-top': 0
@@ -370,17 +378,27 @@ $(function () {
 			$gameRoom.removeClass('wrong');
 			$gameRoom.removeClass('right');
 			$gameInput.text('');
+			$gameTasks.children('.task').each(function(){
+				var $this = $(this);
+				if (!$this.hasClass('solved')) {
+					setSolution($(this),$gameInput.text());
+				}
+			});
 		}
 	}
 	function gameKey(key){
-		if (inLobby && $lobbyRoom.hasClass('show')) {
-			if (key === 'submit') {
-				lobbyReadyButtonClick();
+		if (inLobby) {
+			if ($lobbyRoom.hasClass('show')) {
+				if (key === 'submit') {
+					lobbyReadyButtonClick();
+				}
 			}
 		} else {
 			if (loading === false) {
 				if ($.isNumeric(key)) {
-					$gameInput.append(key);
+					if ($gameInput.text().length <= 4) {
+						$gameInput.append(key);
+					}
 				} else if (key === 'submit') {
 					if ($gameInput.text().length !== 0) {
 						sendSolution($gameInput.text());
@@ -403,6 +421,12 @@ $(function () {
 						}
 					});
 				}
+				$gameTasks.children('.task').each(function(){
+					var $this = $(this);
+					if (!$this.hasClass('solved')) {
+						setSolution($this,$gameInput.text());
+					}
+				});
 			}
 		}
 	}
