@@ -313,7 +313,14 @@ var socket,
 	gameRunning = false,
 	taskIndex = 1,
 	findFreeSolutionTries = 0,
-	tasksSolved = 0;
+	tasksSolved = 0,
+	tasksUsed = {
+		0: 0,
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0
+	};
 
 function onVoteGameType(data) {
 	if (level === 1) {
@@ -346,100 +353,6 @@ function updateVotesGameType(){
 function getRandomInInterval(first,last){
 	return first+Math.floor(Math.random()*((last-first)+1));
 }
-var levels = {
-	1: {
-		tasks: [
-			{t: 'x*y',d: 1, time: 150, space: 10},
-			{t: 'x+y',d: 1, time: 120, space: 1},
-			{t: 'x+y',d: 2, time: 150, space: 10},
-			{t: 'x+y',d: 2, time: 120, space: 1},
-			{t: 'x-y',d: 1, time: 150, space: 10}
-		]
-	},
-	2: {
-		tasks: [
-			{t: 'x*y',d: 1, time: 150, space: 10},
-			{t: 'x*y',d: 1, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10}
-		]
-	},
-	3: {
-		tasks: [
-			{t: 'x+y',d: 2, time: 150, space: 10},
-			{t: 'x-y',d: 2, time: 150, space: 10},
-			{t: 'x+y',d: 2, time: 120, space: 10},
-			{t: 'x-y',d: 2, time: 120, space: 10},
-			{t: 'x+y',d: 3, time: 150, space: 10},
-			{t: 'x-y',d: 3, time: 150, space: 10},
-			{t: 'x+y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x+y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x+y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-		]
-	},
-	4: {
-		tasks: [
-			{t: 'x-y',d: 2, time: 120, space: 10},
-			{t: 'x-y',d: 2, time: 120, space: 10},
-			{t: 'x-y',d: 2, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x+y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x+y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x+y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x+y',d: 3, time: 120, space: 10},
-			{t: 'x-y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-		]
-	},
-	5: {
-		tasks: [
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 2, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10},
-			{t: 'x*y',d: 3, time: 120, space: 10}
-		]
-	}
-};
 stories.push({
 	title: 'mathStroke',
 	levels: {
@@ -664,6 +577,10 @@ function setNextLevel(){
 	gameRunning = true;
 	taskIndex = 1;
 	basicLevel = (level-1)%(tasksCount-4);
+	world = 1+Math.floor((level-1)/(tasksCount-4));
+	for (var i in tasksUsed) {
+		tasksUsed[i] = 0;
+	}
 }
 function sendTaskForm(id){
 	return {
@@ -677,7 +594,6 @@ function startLevel(){
 	inLobby = false;
 	socket.sockets.emit('level start', level);
 	var countDown = 3;
-	world = 1+Math.floor((level-1)/(tasksCount-2));
 	socket.sockets.emit('countdown', countDown);
 	util.log('Starting level '+level+' (world: '+world+')');
 	var iCountDown = setInterval(function(){
@@ -705,6 +621,7 @@ function startGameLoop(){
 				if (countArray(runningTasks) < remainingTasks) {
 					var harderPlus = 0,
 						indexInLevel = taskIndex%tasksCount;
+					if (indexInLevel === 0) {indexInLevel = 20;}
 					switch (taskIndex) {
 						case 2:
 						case 3:
@@ -727,15 +644,15 @@ function startGameLoop(){
 						case 11:
 						case 16:
 						case 18:
-						case 0:
+						case 20:
 							harderPlus = 4;
 							break;
 					}
 					var typeT = tasksHolder[basicLevel+harderPlus].type,
 						versionT = tasksHolder[basicLevel+harderPlus].version;
 					var newTask = getTask(typeT,versionT);
-					tasksSpaceI = Math.ceil((80-indexInLevel)/world);
-					newTask.time = Math.ceil((160-indexInLevel)/world);
+					newTask.time = Math.ceil((60/level+80/indexInLevel+70)/world);
+					tasksSpaceI = Math.ceil(newTask.time/(tasksUsed[harderPlus]+2));
 					runningTasks[taskLastId] = {
 						display: newTask.display,
 						solution: newTask.solution,
@@ -753,6 +670,7 @@ function startGameLoop(){
 					socket.sockets.emit('new task', sendTaskForm(taskLastId));
 					taskIndex++;
 					taskLastId++;
+					tasksUsed[harderPlus]++;
 				}
 			} else {
 				tasksSpaceI--;
@@ -792,7 +710,7 @@ function onSolution(data){
 			if (players[this.id].reloadCountdown === 0 && runningTasks[id].solution == data) {
 				remainingTasks--;
 				tasksSolved++;
-				util.log(players[this.id].nick+' solved task (id: '+id+')');
+				util.log(players[this.id].nick+' (id: '+players[this.id].id+') solved task (id: '+id+')');
 				if (gameType === 'sprint') {
 					var type = runningTasks[id].type,
 						version = runningTasks[id].version,

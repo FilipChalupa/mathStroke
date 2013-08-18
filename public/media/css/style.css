@@ -130,7 +130,7 @@ body, input, textarea {
 }
 .task {
 	position: relative;
-	max-width: 500px;
+	max-width: 268px;
 	margin: 0 auto;
 	border: 1px solid #828282;
 	color: white;
@@ -261,6 +261,9 @@ body, input, textarea {
 	transition: opacity 1s;
 	-webkit-transition: opacity 1s;
 }
+#game.hideKeyboard .countdown {
+	padding-top: 115px;
+}
 #game .countdown.hide {
 	opacity: 0;
 }
@@ -274,7 +277,8 @@ body, input, textarea {
 	padding-bottom: 280px;
 }
 #game.hideKeyboard .tasks  {
-	padding-bottom: 70px;
+	padding-bottom: 0;
+	padding-top: 80px;
 }
 #game .control {
 	position: fixed;
@@ -287,6 +291,8 @@ body, input, textarea {
 }
 #game.hideKeyboard .control {
 	height: 70px;
+		bottom: auto;
+		top: 10px;
 }
 .keyboard {
 	width: 280px;
