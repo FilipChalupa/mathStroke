@@ -204,9 +204,15 @@ body, input, textarea {
 #lobby .failure.show {
 	display: block;
 }
+body.sprint .levelTR {
+	display: none;
+}
 #lobby .levelNumb {
 	font-size: 22px;
 	font-weight: normal;
+}
+body.sprint #lobby .levelNumb {
+	display: none;
 }
 #lobby .storyTitle {
 	padding-bottom: 5px;
@@ -259,6 +265,9 @@ body, input, textarea {
 	padding: 5px;
 	text-align: justify;
 	text-indent: 35px;
+}
+#lobby .ready.block {
+	border-color: #2C2C2C;
 }
 #game .countdown {
 	padding-top: 35px;
@@ -376,11 +385,27 @@ body, input, textarea {
 .stats > .list > div > .answers {
 	width: 40%;
 }
+.stats > .titles > .sprintTime,
+.stats > .list > div > .sprintTime {
+	width: 30%;
+	display: none;
+}
+body.sprint .stats > .titles > .sprintTime,
+body.sprint .stats > .list > div > .sprintTime {
+	display: block;
+}
 .stats > .titles > .right,
 .stats > .titles > .wrong,
 .stats > .list > div > .right,
 .stats > .list > div > .wrong {
 	width: 15%;
+	display: none;
+}
+body.story .stats > .titles > .right,
+body.story .stats > .titles > .wrong,
+body.story .stats > .list > div > .right,
+body.story .stats > .list > div > .wrong {
+	display: block;
 }
 .stats > .titles > .answers > .title {
 	width: 100%;

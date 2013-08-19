@@ -21,7 +21,6 @@ $(function () {
 		tasks = [],
 		loading = false,
 		inLobby = false,
-		blockReady = false,
 		nick = '',
 		playerId = 0,
 		keyboardTimeout,
@@ -42,6 +41,7 @@ $(function () {
 		$settingsRoom = $('#settings'),
 		$gameTasks = $('#game .tasks'),
 		$rooms = $('.room'),
+		$body = $('body'),
 		$messagesRoom = $('#messages'),
 		$messagesRoomMsg = $('#messages .msg'),
 		$lobbyReadyButton = $('#lobby .ready'),
@@ -165,10 +165,14 @@ $(function () {
 		socket.on("player new", onPlayerNew);
 		socket.on("nick update", onNickUpdate);
 		socket.on("votes gametype", onVoteGametype);
+		socket.on("hide statistics", onHideStatistics);
 		socket.on("test", test);
 	};
 	function test(data){
 		alert(data);
+	}
+	function onHideStatistics(data){
+		$failureWrapper.removeClass('show');
 	}
 	function onVoteGametype(data){
 		$lobbyVoting.addClass('show');
@@ -216,16 +220,16 @@ $(function () {
 		$lobbyStatsList.html('');
 		var i = 1;
 		$.each(data,function(key,val){
-			addToStats(i,val.i,val.n,val.r,val.w);
+			addToStats(i,val.i,val.n,val.r,val.w,val.t);
 			i++;
 		});
 	}
 	function onPlayerNew(data){
 		if (playerId != data.i) {
-			addToStats('&nbsp;',data.i,data.n,0,0);
+			addToStats('&nbsp;',data.i,data.n,0,0,0);
 		}
 	}
-	function addToStats(rank,id,nick,right,wrong){
+	function addToStats(rank,id,nick,right,wrong,sprintTime){
 		var addClass;
 		if (nick == '') {
 			nick = '&nbsp;';
@@ -235,7 +239,7 @@ $(function () {
 		} else {
 			addClass = '';
 		}
-		$lobbyStatsList.append('<div data-id="'+id+'"'+addClass+'><div class="rank">'+rank+'</div><div class="nick">'+nick+'</div><div class="right">'+right+'</div><div class="wrong">'+wrong+'</div></div>');
+		$lobbyStatsList.append('<div data-id="'+id+'"'+addClass+'><div class="rank">'+rank+'</div><div class="nick">'+nick+'</div><div class="right">'+right+'</div><div class="wrong">'+wrong+'</div><div class="sprintTime">'+sprintTime+'</div></div>');
 	}
 	function onPlayerGone(data){
 		$lobbyStatsList.children('div').each(function(){
@@ -267,6 +271,8 @@ $(function () {
 		$gameTasks.html('');
 		$level.text(level);
 		$storyTitle.html(data.st);
+		$body.removeClass();
+		$body.addClass(data.gt);
 		if (data.gt == 'story') {
 			$storyWrapper.addClass('show');
 			$levelTitle.html(data.lt);
@@ -278,9 +284,9 @@ $(function () {
 		$gameRoom.removeClass('wrong');
 		$gameRoom.removeClass('right');
 		$gameInput.text('');
-		blockReady = true;
+		$lobbyReadyButton.addClass('block');
 		setTimeout(function(){
-			blockReady = false;
+			$lobbyReadyButton.removeClass('block');
 		},500);
 	}
 	function onLevelStart(data){
@@ -345,13 +351,17 @@ $(function () {
 		$gameTasks.children('.task').each(function(){
 			var $this = $(this);
 			if ($this.data('id') == data.i) {
-				setSolution($this,data.s);
-				$this.addClass('solved').removeClass('danger').append('<div class="player">'+data.n+'</div>').delay(1500).animate({
-					height: "toggle",
-					'margin-top': 0
-					}, 500, function() {
-						$this.remove();
-				});
+				if (data.hasOwnProperty('n')) {
+					setSolution($this,data.s);
+					$this.addClass('solved').removeClass('danger').append('<div class="player">'+data.n+'</div>').delay(1500).animate({
+						height: "toggle",
+						'margin-top': 0
+						}, 500, function() {
+							$this.remove();
+					});
+				} else {
+					$this.remove();
+				}
 			}
 		});
 	}
@@ -451,7 +461,7 @@ $(function () {
 		onLoading(true);
 	}
 	function lobbyReadyButtonClick(){
-		if (blockReady === false) {
+		if (!$lobbyReadyButton.hasClass('block')) {
 			if ($lobbyReadyButton.hasClass('selected')) {
 				socket.emit("ready", false);
 			} else {
