@@ -6,4 +6,5 @@ Multiplayer game made in HTML and Node.js
 TODO
 --------
 - Credits
-- Ping players in lobby
+- Set lobby timeout
+- Show realtime stats in sprint mode
