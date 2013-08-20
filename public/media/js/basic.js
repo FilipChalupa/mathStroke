@@ -440,12 +440,14 @@ $(function () {
 						}
 					});
 				}
-				$gameTasks.children('.task').each(function(){
-					var $this = $(this);
-					if (!$this.hasClass('solved')) {
-						setSolution($this,$gameInput.text());
-					}
-				});
+				if (key !== 'submit') {
+					$gameTasks.children('.task').each(function(){
+						var $this = $(this);
+						if (!$this.hasClass('solved')) {
+							setSolution($this,$gameInput.text());
+						}
+					});
+				}
 			}
 		}
 	}

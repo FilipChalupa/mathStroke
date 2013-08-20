@@ -475,7 +475,9 @@ function checkReady(){
 	if (inLobby === true) {
 		var count = countReadyPlayers();
 		if (count.n === 0 && count.t !== 0) {
-			startLevel();
+			//setTimeout(function(){
+				startLevel();
+			//},250);
 		} else {
 			socket.sockets.emit('not ready', count);
 		}
@@ -618,8 +620,8 @@ function setNextLevel(){
 	for (var i in tasksUsed) {
 		tasksUsed[i] = 0;
 	}
+	sprintTasks = [];
 	if (gameType === 'sprint') {
-		sprintTasks = [];
 		for (var i in tasksHolder) {
 			newTask = getTask(tasksHolder[i].type,tasksHolder[i].version);
 			sprintTasks.push({
@@ -647,7 +649,11 @@ function startLevel(){
 	var countDown = 3;
 	gameRunning = true;
 	socket.sockets.emit('countdown', countDown);
-	util.log('Starting level '+level+' (world: '+world+')');
+	if (gameType === 'story') {
+		util.log('Starting level '+level+' (world: '+world+')');
+	} if (gameType === 'sprint') {
+		util.log('Starting sprint');
+	}
 	var iCountDown = setInterval(function(){
 		if (countDown === 0) {
 			clearInterval(iCountDown);
@@ -822,6 +828,7 @@ function onSolution(data){
 						}
 						if (allDone === true) {
 							gameRunning = false;
+							clearInterval(gameLoop);
 							setTimeout(function(){
 								gameEnd();
 							},1000);
