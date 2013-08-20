@@ -100,6 +100,9 @@ $(function () {
 		showRoom($settingsRoom);
 	});
 	$settingsBack.click(function() {
+		saveSettings();
+	});
+	function saveSettings(){
 		var newNick = $settingsNick.val();
 		if (newNick != nick) {
 			nick = newNick;
@@ -109,7 +112,7 @@ $(function () {
 			localStorage.nick = nick;
 		}
 		showRoom($lobbyRoom);
-	});
+	}
 	$settingsKeyboard.click(function() {
 		$gameRoom.toggleClass('hideKeyboard');
 		if ($gameRoom.hasClass('hideKeyboard')) {
@@ -404,6 +407,10 @@ $(function () {
 				if (key === 'submit') {
 					lobbyReadyButtonClick();
 				}
+			} else if ($settingsRoom.hasClass('show')) {
+				if (key === 'submit' || key === 'escape') {
+					saveSettings();
+				}
 			}
 		} else {
 			if (loading === false) {
@@ -454,6 +461,8 @@ $(function () {
 			gameKey('submit')
 		} else if (e.keyCode === 8) {
 			gameKey('backspace')
+		} else if (e.keyCode === 27) {
+			gameKey('escape')
 		}
 	});
 	function sendSolution(solution) {
