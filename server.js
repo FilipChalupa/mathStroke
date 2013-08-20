@@ -111,7 +111,6 @@ function sortTasksHolder(){
 	});
 }
 sortTasksHolder();
-saveDifficulty();
 fs.readFile(tasksFilePath, 'utf8', function (err, data) {
 	if (err) {
 		util.log('Error: ' + err);
@@ -342,27 +341,29 @@ function onVoteGameType(data) {
 	}
 }
 function updateVotesGameType(){
-	for (var key in votesGameType) {
-		votesGameType[key] = 0;
-	}
-	var countPlayers = 0;
-	for (var id in players) {
-		if (typeof votesGameType[players[id].gametype] !== 'undefined') {
-			votesGameType[players[id].gametype]++;
+	if (inLobby === true) {
+		for (var key in votesGameType) {
+			votesGameType[key] = 0;
 		}
-		countPlayers++;
-	}
-	for (var key in votesGameType) {
-		if (votesGameType[key] > countPlayers/2) {
-			if (gameType !== key) {
-				gameType = key;
-				util.log('Game mode changed to '+gameType);
-				socket.sockets.emit('hide statistics','');
-				setNewGame();
+		var countPlayers = 0;
+		for (var id in players) {
+			if (typeof votesGameType[players[id].gametype] !== 'undefined') {
+				votesGameType[players[id].gametype]++;
+			}
+			countPlayers++;
+		}
+		for (var key in votesGameType) {
+			if (votesGameType[key] > countPlayers/2) {
+				if (gameType !== key) {
+					gameType = key;
+					util.log('Game mode changed to '+gameType);
+					socket.sockets.emit('hide statistics','');
+					setNewGame();
+				}
 			}
 		}
+		socket.sockets.emit('votes gametype',votesGameType);
 	}
-	socket.sockets.emit('votes gametype',votesGameType);
 }
 function getRandomInInterval(first,last){
 	return first+Math.floor(Math.random()*((last-first)+1));
@@ -431,6 +432,41 @@ var safeNick = function(string, reverse){
 		string = string.replace(new RegExp(x, "g"), specialChars[x]);
 	return string;
 };
+function getRTSprintStats(){
+	var data = {
+		p: [],
+		c: sprintTasks.length
+	};
+	for (var id in players) {
+		if (players[id].sprintTime !== '-') {
+			data.p.push({
+				i: players[id].id,
+				n: players[id].nick,
+				s: players[id].sprintSolved
+			});
+		}
+	}
+	return data;
+}
+function updateRTSprintStats(){
+	var data = []
+		sprintersCount = 0;
+	for (var id in players) {
+		if (players[id].sprintTime !== '-') {
+			data.push({
+				i: players[id].id,
+				s: players[id].sprintSolved
+			});
+			sprintersCount++;
+		}
+	}
+	if (sprintersCount === 0) {
+		gameRunning = false;
+		clearInterval(gameLoop);
+		gameEnd();
+	}
+	return data;
+}
 function onNewPlayer(data){
 	playerLastId++;
 	players[this.id] = {
@@ -442,6 +478,7 @@ function onNewPlayer(data){
 		wrong: 0,
 		gametype: '',
 		sprintTime: '-',
+		sprintSolved: 0,
 		currentTask: 'done'
 	};
 	util.log('New player (id: '+playerLastId+')');
@@ -454,6 +491,9 @@ function onNewPlayer(data){
 		socket.sockets.emit('not ready', countReadyPlayers());
 	} else {
 		socket.sockets.socket(this.id).emit('level start', level);
+		if (gameType === 'sprint') {
+			socket.sockets.socket(this.id).emit('new sprintstats', getRTSprintStats());
+		}
 		for (var id in runningTasks) {
 			socket.sockets.socket(this.id).emit('new task', sendTaskForm(runningTasks[id]));
 		}
@@ -468,6 +508,9 @@ function onPlayerDisconnect(){
 	util.log(players[this.id].nick+' disconnected (id: '+players[this.id].id+')');
 	socket.sockets.emit('player gone',players[this.id].id);
 	delete players[this.id];
+	if (gameRunning === true && gameType === 'sprint') {
+		socket.sockets.emit('update sprintstats', updateRTSprintStats());
+	}
 	updateVotesGameType();
 	checkReady();
 }
@@ -566,13 +609,14 @@ function setNewGame(){
 	tasksSolved = 0;
 	sprintData = {};
 	story = stories[Math.floor(Math.random() * stories.length)];
-	for (var player in players) {
-		players[player].ready = false;
-		players[player].right = 0;
-		players[player].wrong = 0;
-		players[player].gametype = '';
-		players[player].score = 0;
-		players[player].currentTask = {};
+	for (var id in players) {
+		players[id].ready = false;
+		players[id].right = 0;
+		players[id].wrong = 0;
+		players[id].gametype = '';
+		players[id].score = 0;
+		players[id].currentTask = {};
+		players[id].sprintSolved = 0;
 	}
 	for (var key in votesGameType) {
 		votesGameType[key] = 0;
@@ -661,7 +705,10 @@ function startLevel(){
 				for (var id in players) {
 					players[id].currentTask = sprintTasks[0];
 					players[id].currentTask.startTime = 0;
+					players[id].sprintSolved = 0;
+					players[id].sprintTime = 0
 				}
+				socket.sockets.emit('new sprintstats', getRTSprintStats());
 				socket.sockets.emit('new task', sendTaskForm(sprintTasks[0]));
 			}
 			startGameStoryLoop();
@@ -794,6 +841,8 @@ function onSolution(data){
 				if (players[this.id].currentTask.solution == data) {
 					isWrong = false;
 					tasksSolved++;
+					players[this.id].sprintSolved++;
+					socket.sockets.emit('update sprintstats', updateRTSprintStats());
 					timeSaved += players[this.id].currentTask.timeSaved;
 					socket.sockets.socket(this.id).emit('solved', {i: players[this.id].currentTask.id});
 					var type = players[this.id].currentTask.type,
@@ -810,7 +859,6 @@ function onSolution(data){
 					console.log('strength: '+difficultyStrength);
 					console.log(sprintData[type][version]);*/
 					sprintData[type][version] = (sprintData[type][version]*difficultyStrength+timeUsed)/(difficultyStrength+1);
-					sprintData[type][version].s++;
 					/*console.log(sprintData[type][version]);
 					console.log('>>>>>>>');*/
 					if ((sprintTasks.length-1) > players[this.id].currentTask.id) {

@@ -23,6 +23,7 @@ $(function () {
 		inLobby = false,
 		nick = '',
 		playerId = 0,
+		sprintStatsMax = 0,
 		keyboardTimeout,
 		playSounds = false;
 	var $level = $('#lobby .level'),
@@ -55,6 +56,7 @@ $(function () {
 		$settingsSounds = $('#settings .soundsToggle'),
 		$settingsNick = $('#settings .nickname'),
 		$countdown = $('#game .countdown'),
+		$sprintStats = $('#game .sprintStats'),
 		$settingsBack = $('#settings .back');
 	function playSound(name){
 		if (playSounds === true && audios[name]) {
@@ -169,8 +171,45 @@ $(function () {
 		socket.on("nick update", onNickUpdate);
 		socket.on("votes gametype", onVoteGametype);
 		socket.on("hide statistics", onHideStatistics);
+		socket.on("new sprintstats", onNewSprintStats);
+		socket.on("update sprintstats", onUpdateSprintStats);
 		socket.on("test", test);
 	};
+	function onNewSprintStats(data){
+		console.log('new stats');
+		$sprintStats.addClass('show');
+		$sprintStats.html('');
+		sprintStatsMax = data.c;
+		var html = '';
+		$.each(data.p,function(key,val){
+			html = '<div data-id="'+val.i+'"><div class="nick">'+val.n+'</div><div class="bar"></div></div>';
+			if (playerId === val.i) {
+				$sprintStats.prepend(html);
+			} else {
+				$sprintStats.append(html);
+			}
+		});
+		onUpdateSprintStats(data.p);
+	}
+	function onUpdateSprintStats(data){
+		console.log('update stats');
+		var formedData = {};
+		$.each(data,function(key,val){
+			formedData[val.i] = val.s;
+		});
+		$sprintStats.children('div').each(function(){
+			var $this = $(this);
+			var pId = $this.data('id');
+			if (formedData.hasOwnProperty(pId)) {
+				$this.children('.bar').css('width',Math.floor(formedData[pId]/sprintStatsMax*100)+'%');
+				if (formedData[pId] === sprintStatsMax) {
+					$this.addClass('done');
+				}
+			} else {
+				$this.addClass('gone');
+			}
+		});
+	}
 	function test(data){
 		alert(data);
 	}
@@ -208,6 +247,7 @@ $(function () {
 		$tasksSolved.text(data.s);
 		$timeSaved.text(data.n);
 		$failureWrapper.addClass('show');
+		$sprintStats.removeClass('show');
 	}
 	function onCountDown(data){
 		$countdown.text(data);
