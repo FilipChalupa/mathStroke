@@ -697,18 +697,18 @@ function startLevel(){
 		util.log('Starting level '+level+' (world: '+world+')');
 	} if (gameType === 'sprint') {
 		util.log('Starting sprint');
+		for (var id in players) {
+			players[id].currentTask = sprintTasks[0];
+			players[id].currentTask.startTime = 0;
+			players[id].sprintSolved = 0;
+			players[id].sprintTime = 0
+		}
+		socket.sockets.emit('new sprintstats', getRTSprintStats());
 	}
 	var iCountDown = setInterval(function(){
 		if (countDown === 0) {
 			clearInterval(iCountDown);
 			if (gameType === 'sprint') {
-				for (var id in players) {
-					players[id].currentTask = sprintTasks[0];
-					players[id].currentTask.startTime = 0;
-					players[id].sprintSolved = 0;
-					players[id].sprintTime = 0
-				}
-				socket.sockets.emit('new sprintstats', getRTSprintStats());
 				socket.sockets.emit('new task', sendTaskForm(sprintTasks[0]));
 			}
 			startGameStoryLoop();

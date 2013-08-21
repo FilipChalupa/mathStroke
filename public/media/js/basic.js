@@ -176,7 +176,6 @@ $(function () {
 		socket.on("test", test);
 	};
 	function onNewSprintStats(data){
-		console.log('new stats');
 		$sprintStats.addClass('show');
 		$sprintStats.html('');
 		sprintStatsMax = data.c;
@@ -269,7 +268,7 @@ $(function () {
 	}
 	function onPlayerNew(data){
 		if (playerId != data.i) {
-			addToStats('&nbsp;',data.i,data.n,0,0,0);
+			addToStats('&nbsp;',data.i,data.n,0,0,'-');
 		}
 	}
 	function addToStats(rank,id,nick,right,wrong,sprintTime){
