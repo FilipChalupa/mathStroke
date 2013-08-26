@@ -191,7 +191,6 @@ $(function () {
 		onUpdateSprintStats(data.p);
 	}
 	function onUpdateSprintStats(data){
-		console.log('update stats');
 		var formedData = {};
 		$.each(data,function(key,val){
 			formedData[val.i] = val.s;
@@ -341,6 +340,9 @@ $(function () {
 	}
 	function onNotReady(data){
 		$lobbyReadyCount.text('('+data.y+'/'+data.t+')');
+		if (data.y === data.t) {
+			$lobbyReadyButton.addClass('block');
+		}
 		$lobbyStatsList.children('div').each(function(){
 			var $this = $(this);
 			if ($.inArray($this.data('id'),data.nId) !== -1) {

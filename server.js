@@ -485,7 +485,9 @@ function onNewPlayer(data){
 	socket.sockets.socket(this.id).emit('player id', playerLastId);
 	socket.sockets.emit('player new',{i: playerLastId, n: players[this.id].nick});
 	if (inLobby === true) {
-		socket.sockets.socket(this.id).emit('votes gametype',votesGameType);
+		if (level === 1) {
+			socket.sockets.socket(this.id).emit('votes gametype',votesGameType);
+		}
 		socket.sockets.socket(this.id).emit('new level', getNewLevelData());
 		socket.sockets.socket(this.id).emit('stats',getStats());
 		socket.sockets.emit('not ready', countReadyPlayers());
@@ -518,12 +520,12 @@ function checkReady(){
 	if (inLobby === true) {
 		var count = countReadyPlayers();
 		if (count.n === 0 && count.t !== 0) {
-			//setTimeout(function(){
+			inLobby = false;
+			setTimeout(function(){
 				startLevel();
-			//},250);
-		} else {
-			socket.sockets.emit('not ready', count);
+			},750);
 		}
+		socket.sockets.emit('not ready', count);
 	}
 }
 function onPlayerReady(data){
@@ -688,7 +690,6 @@ function sendTaskForm(task){
 	};
 }
 function startLevel(){
-	inLobby = false;
 	socket.sockets.emit('level start', level);
 	var countDown = 3;
 	gameRunning = true;
