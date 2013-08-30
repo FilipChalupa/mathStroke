@@ -543,3 +543,54 @@ body.story .stats > .list > div > .wrong {
 	background-color: white;
 	box-shadow: 0 0 3px white;
 }
+
+
+@media (max-width: 400px) {
+	.keyboard {
+		width: auto;
+		font-size: 20px;
+	}
+	.keyboard .button.submit {
+		width: auto;
+		float: none;
+		margin: 2px;
+	}
+	.keyboard .button:not(.submit) {
+		width: 25%;
+		margin: 0;
+		padding: 0;
+		border: none;
+		text-align: center;
+		padding: 10px 0;
+		position: relative;
+		line-height: 30px;
+		height: 30px;
+	}
+	.keyboard .button.backspace {
+		width: 50%;
+	}
+	.keyboard .button:not(.submit):after {
+		content: '';
+		display: block;
+		position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		border: 3px solid #828282;
+		margin: 2px;
+	}
+	.keyboard .button:not(.submit).selected:after {
+		display: none;
+	}
+	#game .control,
+	#game.hideKeyboard .control {
+		height: auto;
+	}
+	#game .tasks {
+		padding-bottom: 204px;
+	}
+	#game.hideKeyboard .tasks  {
+		padding-bottom: 54px;
+	}
+}
