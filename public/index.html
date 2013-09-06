@@ -14,12 +14,18 @@
 </head>
 <body>
 	<div id="messages" class="room show">
+		<div class="roomTitle">Status</div>
 		<div class="msg connecting show">
 			Connecting...
+			<div class="loading"></div>
 		</div>
 		<div class="msg reconnect">
 			Connection lost.<br>
 			Reconnecting...
+			<div class="loading"></div>
+		</div>
+		<div class="msg notSupported">
+			You are using not supported browser.
 		</div>
 	</div>
 	<div id="settings" class="room">

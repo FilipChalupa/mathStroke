@@ -525,5 +525,10 @@ $(function () {
 	$lobbyReadyButton.click(function(){
 		lobbyReadyButtonClick();
 	});
-	connect();
+	if(window.WebSocket){
+		showMessageRoom('connecting');
+		connect();
+	} else {
+		showMessageRoom('notSupported');
+	}
 });

@@ -594,3 +594,9 @@ body.story .stats > .list > div > .wrong {
 		padding-bottom: 54px;
 	}
 }
+.loading {
+	height: 16px;
+	width: 16px;
+	margin: 10px auto;
+	background-image: url(../images/loading.gif);
+}
