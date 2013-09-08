@@ -549,15 +549,16 @@ body.story .stats > .list > div > .wrong {
 	.keyboard {
 		width: auto;
 		font-size: 20px;
+		font-weight: bold;
 	}
 	.keyboard .button.submit {
 		width: auto;
 		float: none;
-		margin: 2px;
+		margin: 2px 1%;
 	}
 	.keyboard .button:not(.submit) {
-		width: 25%;
-		margin: 0;
+		width: 23%;
+		margin: 3px 1%;
 		padding: 0;
 		border: none;
 		text-align: center;
@@ -567,7 +568,7 @@ body.story .stats > .list > div > .wrong {
 		height: 30px;
 	}
 	.keyboard .button.backspace {
-		width: 50%;
+		width: 48%;
 	}
 	.keyboard .button:not(.submit):after {
 		content: '';
@@ -578,7 +579,6 @@ body.story .stats > .list > div > .wrong {
 			right: 0;
 			bottom: 0;
 		border: 3px solid #828282;
-		margin: 2px;
 	}
 	.keyboard .button:not(.submit).selected:after {
 		display: none;
@@ -588,7 +588,7 @@ body.story .stats > .list > div > .wrong {
 		height: auto;
 	}
 	#game .tasks {
-		padding-bottom: 204px;
+		padding-bottom: 222px;
 	}
 	#game.hideKeyboard .tasks  {
 		padding-bottom: 54px;
