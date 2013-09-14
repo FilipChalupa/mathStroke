@@ -170,7 +170,7 @@ $(function () {
 		socket.on("player new", onPlayerNew);
 		socket.on("nick update", onNickUpdate);
 		socket.on("votes gametype", onVoteGametype);
-		socket.on("hide statistics", onHideStatistics);
+		socket.on("hide failure", onHideFailure);
 		socket.on("new sprintstats", onNewSprintStats);
 		socket.on("update sprintstats", onUpdateSprintStats);
 		socket.on("test", test);
@@ -211,7 +211,7 @@ $(function () {
 	function test(data){
 		alert(data);
 	}
-	function onHideStatistics(data){
+	function onHideFailure(data){
 		$failureWrapper.removeClass('show');
 	}
 	function onVoteGametype(data){

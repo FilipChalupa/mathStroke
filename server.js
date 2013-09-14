@@ -6,7 +6,7 @@ var http = require("http"),
 	path = require("path"),
 	fs = require("fs"),
 	mime = require("mime"),
-	port = process.argv[2] || 8080;
+	port = process.argv[2] || 8000;
 
 var socket,
 	players = [],
@@ -23,6 +23,7 @@ var socket,
 		'story': 0,
 		'sprint': 0
 	},
+	modeJustChanged = false,
 	basicLevel = 0,
 	sprintTitle = 'Sprint!',
 	sprintData = {},
@@ -357,7 +358,11 @@ function updateVotesGameType(){
 				if (gameType !== key) {
 					gameType = key;
 					util.log('Game mode changed to '+gameType);
-					socket.sockets.emit('hide statistics','');
+					socket.sockets.emit('hide failure','');
+					modeJustChanged = true;
+					setTimeout(function(){
+						modeJustChanged = false;
+					},500);
 					setNewGame();
 				}
 			}
@@ -646,7 +651,7 @@ function setNextLevel(){
 	for (var id in players) {
 		players[id].ready = false;
 	}
-	if (level !== 1) {
+	if (level !== 1 || modeJustChanged === true) {
 		socket.sockets.emit('stats',getStats());
 	} else {
 		socket.sockets.emit('votes gametype',votesGameType);
