@@ -1,0 +1,18 @@
+{
+	"title": "mathStroke",
+	"levels": {
+		"1": {
+			"title": "BREAKING NEWS",
+			"text": "<p>A new unidentified object appeared in the sky last night. All the great scientists and astronomers were called to an international meeting to figure out what type of object that is and whether or not are we dealing with a serious problem.</p><p>The scientists are too busy solving all the various complicated problems. Help them out to figure out what we are dealing with...</p>"
+		},
+		"2": {
+			"title": "Lvl 2",
+			"text": "<p>The first results show that the object has moved overnight and that now appears to be little bit bigger than the previous day. The scientists have found out that we’re dealing with a large asteroid which originates from the Jupiter’s moon Ganymede.</p><p>From the latest news arises a new problem: “Is there any threat to the Earth?”, “We have to make some further calculations in order to find out in which specific direction is the asteroid going.”</p><p>In order to speed up the calculations, solve a few for them...</p>"
+		},
+		"end": {
+			"title": "End",
+			"text": "This is the end of the story."
+		},
+		"failure": "Game over."
+	}
+}

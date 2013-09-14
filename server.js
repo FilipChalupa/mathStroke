@@ -18,7 +18,7 @@ var socket,
 	playerLastId = 0,
 	remainingTasks = 0,
 	inLobby = true,
-	gameType = 'sprint',
+	gameType = 'story',
 	votesGameType = {
 		'story': 0,
 		'sprint': 0
@@ -31,7 +31,6 @@ var socket,
 	tasksSpaceI = 0,
 	reloadCountdown = 2,
 	recoverReloadCountdown = 10,
-	stories = [],
 	story,
 	gameRunning = false,
 	taskIndex = 1,
@@ -48,6 +47,26 @@ var socket,
 		4: 0
 	};
 
+function getStory() {
+	var path = './stories/', json = {};
+	var filenames = fs.readdirSync(path);
+	var file = fs.readFileSync(path+filenames[Math.floor(Math.random()*filenames.length)], "utf8");
+	try {
+		json = JSON.parse(file);
+	} catch (e) {
+
+	}
+	if (!json.hasOwnProperty('title')) {
+		json.title = '';
+	}
+	if (!json.hasOwnProperty('levels')) {
+		json.levels = {};
+	}
+	if (!json.levels.hasOwnProperty('end')) {
+		json.levels.end = {};
+	}
+	return json;
+}
 var server = http.createServer(function(request, response) {
 	var uri = '/public'+url.parse(request.url).pathname,
 		filename = path.join(process.cwd(), uri);
@@ -373,32 +392,6 @@ function updateVotesGameType(){
 function getRandomInInterval(first,last){
 	return first+Math.floor(Math.random()*((last-first)+1));
 }
-stories.push({
-	title: 'mathStroke',
-	levels: {
-		1: {
-			title: 'Welcome',
-			text: '---'
-		},
-		/*2: {
-			title: 'Faster!',
-			text: 'We are running out of time.'
-		},
-		3: {
-			title: 'Turbo',
-			text: 'There is no time to rest'
-		},*/
-		/*3: {
-			title: 'Harder',
-			text: '<img src="http://library.thinkquest.org/J002596/Calcdude.gif" width="415" height="388"><p>I did the same thing as well, though you do have to be careful sometimes when messing with Array.prototype, especially when using third-party modules.</p><p>I did the same thing as well, though you do have to be careful sometimes when messing with Array.prototype, especially when using third-party modules.</p>'
-		},*/
-		end: {
-			title: 'End',
-			text: 'This is the end of the story.'
-		},
-		failure: 'Game over.'
-	}
-});
 var setEventHandlers = function() {
 	socket.sockets.on("connection", onSocketConnection);
 };
@@ -615,7 +608,7 @@ function setNewGame(){
 	taskLastId = 0;
 	tasksSolved = 0;
 	sprintData = {};
-	story = stories[Math.floor(Math.random() * stories.length)];
+	story = getStory();
 	for (var id in players) {
 		players[id].ready = false;
 		players[id].right = 0;
@@ -633,13 +626,22 @@ function setNewGame(){
 function getNewLevelData(){
 	if (gameType === 'story') {
 		var levelTitle = '',
-			levelText = '';
+			levelText = '',
+			levelInfo;
 		if (story.levels[level]) {
-			levelTitle = story.levels[level].title;
-			levelText = story.levels[level].text;
+			levelInfo = story.levels[level];
 		} else {
-			levelTitle = story.levels.end.title;
-			levelText = story.levels.end.text;
+			levelInfo = story.levels.end;
+		}
+		if (levelInfo.hasOwnProperty('title')) {
+			levelTitle = levelInfo.title;
+		} else {
+			levelTitle = '';
+		}
+		if (levelInfo.hasOwnProperty('text')) {
+			levelText = levelInfo.text;
+		} else {
+			levelText = '';
 		}
 		return {gt: gameType, l: level,st: story.title,lt: levelTitle,lx: levelText};
 	} else if (gameType === 'sprint') {
@@ -712,16 +714,20 @@ function startLevel(){
 		socket.sockets.emit('new sprintstats', getRTSprintStats());
 	}
 	var iCountDown = setInterval(function(){
-		if (countDown === 0) {
-			clearInterval(iCountDown);
-			if (gameType === 'sprint') {
-				socket.sockets.emit('new task', sendTaskForm(sprintTasks[0]));
+		if (inLobby === false) {
+			if (countDown === 0) {
+				clearInterval(iCountDown);
+				if (gameType === 'sprint') {
+					socket.sockets.emit('new task', sendTaskForm(sprintTasks[0]));
+				}
+				startGameStoryLoop();
+			} else {
+				countDown--;
+				socket.sockets.emit('countdown', countDown);
+				util.log('Countdown: '+countDown);
 			}
-			startGameStoryLoop();
 		} else {
-			countDown--;
-			socket.sockets.emit('countdown', countDown);
-			util.log('Countdown: '+countDown);
+			clearInterval(iCountDown);
 		}
 	},1000);
 }

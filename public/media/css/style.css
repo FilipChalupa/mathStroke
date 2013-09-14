@@ -89,7 +89,8 @@ body, input, textarea {
 }
 .button.selected,
 #game.right .keyboard .button.submit,
-#game.wrong .keyboard .button.submit {
+#game.wrong .keyboard .button.submit,
+#lobby .ready.block.selected {
 	border-color: transparent;
 	background-color: #0050EF;
 	color: white;

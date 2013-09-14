@@ -314,7 +314,7 @@ $(function () {
 		$storyTitle.html(data.st);
 		$body.removeClass();
 		$body.addClass(data.gt);
-		if (data.gt == 'story') {
+		if (data.gt === 'story' && data.lt !== '' && data.lx !== '') {
 			$storyWrapper.addClass('show');
 			$levelTitle.html(data.lt);
 			$levelText.html(data.lx);
