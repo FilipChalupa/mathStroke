@@ -1,10 +1,10 @@
 $(function () {
 	var requestAnimationFrame = (function(){
-		return  window.requestAnimationFrame   || 
-			window.webkitRequestAnimationFrame || 
-			window.mozRequestAnimationFrame    || 
-			window.oRequestAnimationFrame      || 
-			window.msRequestAnimationFrame     || 
+		return  window.requestAnimationFrame   ||
+			window.webkitRequestAnimationFrame ||
+			window.mozRequestAnimationFrame    ||
+			window.oRequestAnimationFrame      ||
+			window.msRequestAnimationFrame     ||
 			function(callback, element){
 				window.setTimeout(callback, 1000 / 60);
 			};
@@ -149,7 +149,7 @@ $(function () {
 	function connect() {
 		socket = io.connect("/", {port: {{server_port}}, transports: ["websocket"]});
 		setEventHandlers();
-	};
+	}
 	var setEventHandlers = function() {
 		socket.on("connect", onSocketConnected);
 		socket.on("disconnect", onSocketDisconnect);

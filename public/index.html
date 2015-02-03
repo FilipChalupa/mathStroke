@@ -1,128 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>mathStroke</title>
-	<meta name="description" content='Multiplayer online game.' />
-	<link rel="stylesheet" href="./media/css/style.css" />
-	<link rel="shortcut icon" href="./favicon.ico" />
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script>window.jQuery || document.write('<script src="./media/js/jquery-1.9.1.min.js"><\/script>')</script>
-	<script src="./media/js/socket.io.js"></script>
-	<script src="./media/js/basic.js"></script>
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta charset="utf-8">
+    <title>mathStroke</title>
+    <meta name="description" content='Multiplayer online game.' />
+    <link rel="stylesheet" href="./media/css/style.css" />
+    <link rel="shortcut icon" href="./favicon.ico" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./media/js/jquery-1.9.1.min.js"><\/script>')</script>
+    <script src="./media/js/socket.io.js"></script>
+    <script src="./media/js/basic.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 </head>
 <body>
-	<div id="messages" class="room show">
-		<div class="roomTitle">Status</div>
-		<div class="msg connecting show">
-			Connecting...
-			<div class="loading"></div>
-		</div>
-		<div class="msg reconnect">
-			Connection lost.<br>
-			Reconnecting...
-			<div class="loading"></div>
-		</div>
-		<div class="msg notSupported">
-			You are using not supported browser.
-		</div>
-	</div>
-	<div id="settings" class="room">
-		<div class="roomTitle">Settings</div>
-		<form id="settings_form" action="#">
-			<div>
-				<input type="text" class="nickname" maxlength="13" placeholder="Nickname">
-			</div>
-			<div class="keyboardToggle switchToggle">
-				<div class="title">Show keyboard</div>
-				<div class="s"></div>
-			</div>
-			<div class="soundsToggle switchToggle">
-				<div class="title">Sounds</div>
-				<div class="s"></div>
-			</div>
-		</form>
-		<div class="button back">Save</div>
-	</div>
-	<div id="game" class="room">
-		<div class="countdown"></div>
-		<div class="tasks"></div>
-		<div class="sprintStats"></div>
-		<div class="control">
-			<div class="keyboard">
-				<div class="button submit input" data-key="submit"></div>
-				<div class="button" data-key="0">0</div>
-				<div class="button" data-key="1">1</div>
-				<div class="button" data-key="2">2</div>
-				<div class="button" data-key="3">3</div>
-				<div class="button" data-key="4">4</div>
-				<div class="button" data-key="5">5</div>
-				<div class="button" data-key="6">6</div>
-				<div class="button" data-key="7">7</div>
-				<div class="button" data-key="8">8</div>
-				<div class="button" data-key="9">9</div>
-				<div class="button backspace" data-key="backspace">&#8592;</div>
-			</div>
-		</div>
-	</div>
-	<div id="lobby" class="room">
-		<div class="roomTitle">
-			<div class="storyTitle"></div>
-			<div class="levelNumb">
-				Level: <span class="level"></span>
-			</div>
-		</div>
-		<div class="button ready">
-			Ready
-			<span class="notReady"></span>
-		</div>
-		<div class="typeVoting">
-			<div class="button" data-type="story">Story<br>(<span>0</span>)</div>
-			<div class="divider"></div>
-			<div class="button" data-type="sprint">Sprint<br>(<span>0</span>)</div>
-			<div class="clearer"></div>
-		</div>
-		<div class="story">
-			<div class="levelTitle"></div>
-			<div class="levelText"><div class="content"></div></div>
-		</div>
-		<div class="stats">
-			<div class="failure">
-				<div class="dataList">
-					<div>
-						<table>
-							<tr class="levelTR">
-								<td>Last level:</td>
-								<td class="levelFailure"></td>
-							<tr>
-							</tr>
-								<td>Tasks solved:</td>
-								<td class="tasksSolved"></td>
-							<tr>
-							</tr>
-								<td>Nanoseconds saved:</td>
-								<td class="timeSaved"></td>
-							</tr>
-						</table>
-					</div>
-				</div>
-				<div class="textFailure"></div>
-			</div>
-			<div class="titles">
-				<div class="rank">#</div>
-				<div class="nick">Nickname</div>
-				<div class="right">+</div>
-				<div class="wrong">-</div>
-				<div class="sprintTime">[s]</div>
-			</div>
-			<div class="clearer"></div>
-			<div class="list"></div>
-			<div class="clearer"></div>
-		</div>
-		<div class="settings button">Settings</div>
-	</div>
-	<div id="audio">
+    <div id="messages" class="room show">
+        <div class="roomTitle">Status</div>
+        <div class="msg connecting show">
+            Connecting...
+            <div class="loading"></div>
+        </div>
+        <div class="msg reconnect">
+            Connection lost.<br>
+            Reconnecting...
+            <div class="loading"></div>
+        </div>
+        <div class="msg notSupported">
+            You are using not supported browser.
+        </div>
+    </div>
+    <div id="settings" class="room">
+        <div class="roomTitle">Settings</div>
+        <form id="settings_form" action="#">
+            <div>
+                <input type="text" class="nickname" maxlength="13" placeholder="Nickname">
+            </div>
+            <div class="keyboardToggle switchToggle">
+                <div class="title">Show keyboard</div>
+                <div class="s"></div>
+            </div>
+            <div class="soundsToggle switchToggle">
+                <div class="title">Sounds</div>
+                <div class="s"></div>
+            </div>
+        </form>
+        <div class="button back">Save</div>
+    </div>
+    <div id="game" class="room">
+        <div class="countdown"></div>
+        <div class="tasks"></div>
+        <div class="sprintStats"></div>
+        <div class="control">
+            <div class="keyboard">
+                <div class="button submit input" data-key="submit"></div>
+                <div class="button" data-key="0">0</div>
+                <div class="button" data-key="1">1</div>
+                <div class="button" data-key="2">2</div>
+                <div class="button" data-key="3">3</div>
+                <div class="button" data-key="4">4</div>
+                <div class="button" data-key="5">5</div>
+                <div class="button" data-key="6">6</div>
+                <div class="button" data-key="7">7</div>
+                <div class="button" data-key="8">8</div>
+                <div class="button" data-key="9">9</div>
+                <div class="button backspace" data-key="backspace">&#8592;</div>
+            </div>
+        </div>
+    </div>
+    <div id="lobby" class="room">
+        <div class="roomTitle">
+            <div class="storyTitle"></div>
+            <div class="levelNumb">
+                Level: <span class="level"></span>
+            </div>
+        </div>
+        <div class="button ready">
+            Ready
+            <span class="notReady"></span>
+        </div>
+        <div class="typeVoting">
+            <div class="button" data-type="story">Story<br>(<span>0</span>)</div>
+            <div class="divider"></div>
+            <div class="button" data-type="sprint">Sprint<br>(<span>0</span>)</div>
+            <div class="clearer"></div>
+        </div>
+        <div class="story">
+            <div class="levelTitle"></div>
+            <div class="levelText"><div class="content"></div></div>
+        </div>
+        <div class="stats">
+            <div class="failure">
+                <div class="dataList">
+                    <div>
+                        <table>
+                            <tr class="levelTR">
+                                <td>Last level:</td>
+                                <td class="levelFailure"></td>
+                            <tr>
+                            </tr>
+                                <td>Tasks solved:</td>
+                                <td class="tasksSolved"></td>
+                            <tr>
+                            </tr>
+                                <td>Nanoseconds saved:</td>
+                                <td class="timeSaved"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="textFailure"></div>
+            </div>
+            <div class="titles">
+                <div class="rank">#</div>
+                <div class="nick">Nickname</div>
+                <div class="right">+</div>
+                <div class="wrong">-</div>
+                <div class="sprintTime">[s]</div>
+            </div>
+            <div class="clearer"></div>
+            <div class="list"></div>
+            <div class="clearer"></div>
+        </div>
+        <div class="settings button">Settings</div>
+    </div>
+    <div id="audio">
       <audio data-name="success">
         <source src="/media/sounds/success.mp3" type="audio/mpeg" />
         <source src="/media/sounds/success.ogg" type="audio/ogg" />
@@ -148,6 +148,6 @@
         <source src="/media/sounds/start.ogg" type="audio/ogg" />-->
         <source src="/media/sounds/finish.wav" type="audio/wav" />
       </audio>
-	</div>
+    </div>
 </body>
 </html>
