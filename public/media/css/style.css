@@ -230,7 +230,7 @@ body.sprint #lobby .levelNumb {
     display: none;
 }
 #lobby .story.show {
-    display: block;
+    /*display: block;*/
 }
 #lobby .typeVoting {
     display: none;
