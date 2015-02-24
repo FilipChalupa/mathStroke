@@ -1,12 +1,16 @@
-var util = require("util"),
-    io = require("socket.io");
+var util = require("util");
 
 var http = require("http"),
     url = require("url"),
     path = require("path"),
     fs = require("fs"),
-    mime = require("mime"),
-    port = process.argv[2] || 8000;
+    mime = require("mime");
+
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var socketio_port = process.env.OPENSHIFT_NODEJS_PORT || 8081;
+var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+
+var io = require("socket.io")(socketio_port);
 
 var socket,
     players = [],
@@ -90,7 +94,7 @@ var server = http.createServer(function(request, response) {
             util.log('Request '+uri+' (200)');
             response.writeHead(200, {"Content-Type": mime.lookup(filename)});
             if (uri == '/public/media/js/basic.js') {
-                file = file.replace('{{server_port}}',port);
+                file = file.replace('{{server_port}}', socketio_port);
             }
             response.write(file, "binary");
             response.end();
@@ -343,15 +347,12 @@ function getTask(type,difficulty){
 function init() {
     players = [];
     socket = io.listen(server);
-    socket.configure(function() {
-        socket.set("transports", ["websocket"]);
-        socket.set("log level", 2);
-    });
     setEventHandlers();
     setNewGame();
 }
-server.listen(parseInt(port, 10));
-util.log("Server running at port " + port);
+server.listen(parseInt(server_port, 10), server_ip_address, function(){
+    util.log("Listening on " + server_ip_address + ":" + server_port);
+});
 
 function onVoteGameType(data) {
     if (level === 1) {
@@ -479,22 +480,22 @@ function onNewPlayer(data){
         currentTask: 'done'
     };
     util.log('New player (id: '+playerLastId+')');
-    socket.sockets.socket(this.id).emit('player id', playerLastId);
+    socket.sockets.to(this.id).emit('player id', playerLastId);
     socket.sockets.emit('player new',{i: playerLastId, n: players[this.id].nick});
     if (inLobby === true) {
         if (level === 1) {
-            socket.sockets.socket(this.id).emit('votes gametype',votesGameType);
+            socket.sockets.to(this.id).emit('votes gametype',votesGameType);
         }
-        socket.sockets.socket(this.id).emit('new level', getNewLevelData());
-        socket.sockets.socket(this.id).emit('stats',getStats());
+        socket.sockets.to(this.id).emit('new level', getNewLevelData());
+        socket.sockets.to(this.id).emit('stats',getStats());
         socket.sockets.emit('not ready', countReadyPlayers());
     } else {
-        socket.sockets.socket(this.id).emit('level start', level);
+        socket.sockets.to(this.id).emit('level start', level);
         if (gameType === 'sprint') {
-            socket.sockets.socket(this.id).emit('new sprintstats', getRTSprintStats());
+            socket.sockets.to(this.id).emit('new sprintstats', getRTSprintStats());
         }
         for (var id in runningTasks) {
-            socket.sockets.socket(this.id).emit('new task', sendTaskForm(runningTasks[id]));
+            socket.sockets.to(this.id).emit('new task', sendTaskForm(runningTasks[id]));
         }
     }
 }
@@ -745,7 +746,7 @@ function startGameStoryLoop(){
                 if (players[id].reloadCountdown !== 0) {
                     players[id].reloadCountdown--;
                     if (players[id].reloadCountdown === 0) {
-                        socket.sockets.socket(id).emit('loading', false);
+                        socket.sockets.to(id).emit('loading', false);
                     }
                 }
             }
@@ -855,7 +856,7 @@ function onSolution(data){
                     players[this.id].sprintSolved++;
                     socket.sockets.emit('update sprintstats', updateRTSprintStats());
                     timeSaved += players[this.id].currentTask.timeSaved;
-                    socket.sockets.socket(this.id).emit('solved', {i: players[this.id].currentTask.id});
+                    socket.sockets.to(this.id).emit('solved', {i: players[this.id].currentTask.id});
                     var type = players[this.id].currentTask.type,
                         version = players[this.id].currentTask.version,
                         timeUsed = time-players[this.id].currentTask.startTime;
@@ -875,7 +876,7 @@ function onSolution(data){
                     if ((sprintTasks.length-1) > players[this.id].currentTask.id) {
                         players[this.id].currentTask = sprintTasks[parseInt(players[this.id].currentTask.id, 10)+1];
                         players[this.id].currentTask.startTime = time;
-                        socket.sockets.socket(this.id).emit('new task', sendTaskForm(players[this.id].currentTask));
+                        socket.sockets.to(this.id).emit('new task', sendTaskForm(players[this.id].currentTask));
                     } else {
                         var allDone = true;
                         players[this.id].currentTask = 'done';
@@ -906,7 +907,7 @@ function onSolution(data){
                 players[this.id].reloadCountdown = reloadCountdown;
                 players[this.id].right++;
             }
-            socket.sockets.socket(this.id).emit('was wrong', isWrong);
+            socket.sockets.to(this.id).emit('was wrong', isWrong);
         }
     }
 }
