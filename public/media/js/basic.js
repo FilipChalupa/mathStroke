@@ -147,7 +147,7 @@ $(function () {
         $messagesRoom.children('.'+message).addClass('show');
     }
     function connect() {
-        socket = io.connect(location.origin, {port: {{server_port}}, transports: ["websocket"]});
+        socket = io.connect(location.origin, {port: "{{server_port}}", transports: ["websocket"]});
         setEventHandlers();
     }
     var setEventHandlers = function() {

@@ -6,7 +6,7 @@ var http = require("http"),
     fs = require("fs"),
     mime = require("mime");
 
-var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8000;
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 80;
 var websocket_port = 8000;
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
@@ -92,7 +92,7 @@ var server = http.createServer(function(request, response) {
             util.log('Request '+uri+' (200)');
             response.writeHead(200, {"Content-Type": mime.lookup(filename)});
             if (uri == '/public/media/js/basic.js') {
-                file = file.replace('{{server_port}}', websocket_port);
+                file = file.replace('"{{server_port}}"', websocket_port);
             }
             response.write(file, "binary");
             response.end();
@@ -392,6 +392,7 @@ function getRandomInInterval(first,last){
 }
 var setEventHandlers = function() {
     socket.sockets.on("connection", onSocketConnection);
+    util.log('Uninitialized client connected');
 };
 function onSocketConnection(client) {
     client.on("disconnect", onPlayerDisconnect);
@@ -503,14 +504,18 @@ function onPlayerUpdate(data){
     util.log('Player changed name to '+players[this.id].nick+' (id: '+players[this.id].id+')');
 }
 function onPlayerDisconnect(){
-    util.log(players[this.id].nick+' disconnected (id: '+players[this.id].id+')');
-    socket.sockets.emit('player gone',players[this.id].id);
-    delete players[this.id];
-    if (gameRunning === true && gameType === 'sprint') {
-        socket.sockets.emit('update sprintstats', updateRTSprintStats());
+    if (players[this.id]) {
+        util.log(players[this.id].nick+' disconnected (id: '+players[this.id].id+')');
+        socket.sockets.emit('player gone',players[this.id].id);
+        delete players[this.id];
+        if (gameRunning === true && gameType === 'sprint') {
+            socket.sockets.emit('update sprintstats', updateRTSprintStats());
+        }
+        updateVotesGameType();
+        checkReady();
+    } else {
+        util.log('Uninitialized client disconnected');
     }
-    updateVotesGameType();
-    checkReady();
 }
 function checkReady(){
     if (inLobby === true) {
