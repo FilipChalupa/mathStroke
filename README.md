@@ -4,6 +4,10 @@ mathStroke [![Gittip](https://raw.github.com/Onset/mathStroke/master/gittip.png)
 Multiplayer game made in HTML and Node.js
 ![Screenshot](https://raw.github.com/Onset/mathStroke/master/screenshot.png)
 
+Online
+--------
+http://mathstroke-ofecka.rhcloud.com:8000/
+
 TODO
 --------
 - Credits
