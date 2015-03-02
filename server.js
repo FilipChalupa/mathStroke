@@ -7,7 +7,7 @@ var http = require("http"),
     mime = require("mime");
 
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 80;
-var websocket_port = 8000;
+var websocket_port = server_port;
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 var socket,
