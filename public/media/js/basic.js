@@ -1,14 +1,4 @@
 $(function () {
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-52555251-4']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = 'https://stats.g.doubleclick.net/dc.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-
     var requestAnimationFrame = (function(){
         return  window.requestAnimationFrame   ||
             window.webkitRequestAnimationFrame ||
@@ -119,7 +109,6 @@ $(function () {
         if (newNick != nick) {
             nick = newNick;
             socket.emit("player update", {nick: nick});
-            _gaq.push(['_trackEvent', 'nick-setting', nick]);
         }
         if(typeof(Storage)!=="undefined") {
             localStorage.nick = nick;
@@ -130,10 +119,8 @@ $(function () {
         $gameRoom.toggleClass('hideKeyboard');
         if ($gameRoom.hasClass('hideKeyboard')) {
             $settingsKeyboard.removeClass('selected');
-            _gaq.push(['_trackEvent', 'keyboard-setting', 'hide']);
         } else {
             $settingsKeyboard.addClass('selected');
-            _gaq.push(['_trackEvent', 'keyboard-setting', 'show']);
         }
         if(typeof(Storage)!=="undefined") {
             localStorage.hideKeyboard = $gameRoom.hasClass('hideKeyboard');
@@ -143,10 +130,8 @@ $(function () {
         playSounds = !playSounds;
         if (playSounds === true) {
             $settingsSounds.addClass('selected');
-            _gaq.push(['_trackEvent', 'sounds-setting', 'play']);
         } else {
             $settingsSounds.removeClass('selected');
-            _gaq.push(['_trackEvent', 'sounds-setting', 'mute']);
         }
         if(typeof(Storage)!=="undefined") {
             localStorage.playSounds = playSounds;
