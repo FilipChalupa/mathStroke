@@ -6,7 +6,8 @@ var http = require("http"),
     fs = require("fs"),
     mime = require("mime");
 
-var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8000;
+var websocket_port = 8000;
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 var socket,
@@ -91,7 +92,7 @@ var server = http.createServer(function(request, response) {
             util.log('Request '+uri+' (200)');
             response.writeHead(200, {"Content-Type": mime.lookup(filename)});
             if (uri == '/public/media/js/basic.js') {
-                file = file.replace('{{server_port}}', server_port);
+                file = file.replace('{{server_port}}', websocket_port);
             }
             response.write(file, "binary");
             response.end();
