@@ -310,6 +310,10 @@ body.sprint #lobby .levelNumb {
     margin: 0 auto;
     font-size: 30px;
     position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .keyboard .button {
     text-align: left;
