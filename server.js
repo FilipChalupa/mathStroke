@@ -7,10 +7,7 @@ var http = require("http"),
     mime = require("mime");
 
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var socketio_port = process.env.OPENSHIFT_NODEJS_PORT || 8081;
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
-
-var io = require("socket.io")(socketio_port);
 
 var socket,
     players = [],
@@ -94,13 +91,14 @@ var server = http.createServer(function(request, response) {
             util.log('Request '+uri+' (200)');
             response.writeHead(200, {"Content-Type": mime.lookup(filename)});
             if (uri == '/public/media/js/basic.js') {
-                file = file.replace('{{server_port}}', socketio_port);
+                file = file.replace('{{server_port}}', server_port);
             }
             response.write(file, "binary");
             response.end();
         });
     });
 });
+var socket = require("socket.io")(server);
 
 var tasksFilePath = __dirname+'/tasks.json',
     tasksHolder = [],
@@ -346,7 +344,6 @@ function getTask(type,difficulty){
 }
 function init() {
     players = [];
-    socket = io.listen(server);
     setEventHandlers();
     setNewGame();
 }
