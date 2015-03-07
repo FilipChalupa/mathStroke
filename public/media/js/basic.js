@@ -1,4 +1,8 @@
 $(function () {
+    if (location.hostname === 'mathstroke-ofecka.rhcloud.com' && location.port != '8000') {
+        window.location.replace(location.protocol+'//'+location.hostname+':8000');
+    }
+
     var requestAnimationFrame = (function(){
         return  window.requestAnimationFrame   ||
             window.webkitRequestAnimationFrame ||
