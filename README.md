@@ -1,14 +1,15 @@
 mathStroke [![Gittip](https://raw.github.com/Onset/mathStroke/master/gittip.png)](https://www.gittip.com/Onset/)
 ==========
 
-Multiplayer game made in HTML and Node.js
-![Screenshot](https://raw.github.com/Onset/mathStroke/master/screenshot.png)
+Do you like math? Let's play mathStroke. Multiplayer online game which helps you practise basic calculations.
 
-Online
---------
-http://mathstroke-ofecka.rhcloud.com:8000/
+http://mathstroke-ofecka.rhcloud.com:8000
+
+![Screenshot](https://raw.github.com/Onset/mathStroke/master/screenshot.png)
 
 TODO
 --------
-- Credits
+- Add some stories to story mode
 - Set lobby timeout
+- Show connected players when playing
+- Ping players - disconnect inactive
