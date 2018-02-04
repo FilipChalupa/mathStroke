@@ -3,7 +3,7 @@ mathStroke [![Gittip](https://raw.github.com/Onset/mathStroke/master/gittip.png)
 
 Do you like math? Let's play mathStroke. Multiplayer online game which helps you practise basic calculations.
 
-http://mathstroke-ofecka.rhcloud.com:8000
+https://math-stroke.herokuapp.com/
 
 ![Screenshot](https://raw.github.com/Onset/mathStroke/master/screenshot.png)
 
