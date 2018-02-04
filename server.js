@@ -6,8 +6,7 @@ var http = require("http"),
     fs = require("fs"),
     mime = require("mime");
 
-var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var server_port = parseInt(process.env.PORT || 8080, 10);
 
 var socket,
     players = [],
@@ -344,8 +343,8 @@ function init() {
     setEventHandlers();
     setNewGame();
 }
-server.listen(parseInt(server_port, 10), server_ip_address, function(){
-    util.log("Listening on " + server_ip_address + ":" + server_port);
+server.listen(server_port, function(){
+    util.log("Listening on port: " + server_port);
 });
 
 function onVoteGameType(data) {
