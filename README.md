@@ -1,4 +1,4 @@
-mathStroke [![Gittip](https://raw.github.com/Onset/mathStroke/master/gittip.png)](https://www.gittip.com/Onset/)
+mathStroke
 ==========
 
 Do you like math? Let's play mathStroke. Multiplayer online game which helps you practise basic calculations.
