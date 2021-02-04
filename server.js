@@ -31,6 +31,7 @@ var socket,
     tasksSpaceI = 0,
     reloadCountdown = 2,
     recoverReloadCountdown = 10,
+    playersReadyNeeded = 3,
     story,
     gameRunning = false,
     taskIndex = 1,
@@ -515,7 +516,7 @@ function onPlayerDisconnect(){
 function checkReady(){
     if (inLobby === true) {
         var count = countReadyPlayers();
-        if (count.n === 0 && count.t !== 0) {
+        if (count.y >= count.pn) {
             inLobby = false;
             setTimeout(function(){
                 startLevel();
@@ -545,7 +546,13 @@ function countReadyPlayers(){
         }
         total++;
     }
-    return {y: (total-notReady), n: notReady, t: total, nId: nIds};
+    return {
+        y: total - notReady,
+        n: notReady,
+        t: total,
+        nId: nIds,
+        pn: Math.min(Math.max(1, total), playersReadyNeeded),
+    }
 }
 function countArray(array){
     var i = 0;

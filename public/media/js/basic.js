@@ -329,8 +329,8 @@ $(function () {
         showRoom($gameRoom);
     }
     function onNotReady(data){
-        $lobbyReadyCount.text('('+data.y+'/'+data.t+')');
-        if (data.y === data.t) {
+        $lobbyReadyCount.text('('+data.y+'/'+data.pn+')');
+        if (data.y === data.pn) {
             $lobbyReadyButton.addClass('block');
         }
         $lobbyStatsList.children('div').each(function(){
