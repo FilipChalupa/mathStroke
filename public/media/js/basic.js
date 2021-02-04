@@ -1,14 +1,4 @@
 $(function () {
-    var requestAnimationFrame = (function(){
-        return  window.requestAnimationFrame   ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame    ||
-            window.oRequestAnimationFrame      ||
-            window.msRequestAnimationFrame     ||
-            function(callback, element){
-                window.setTimeout(callback, 1000 / 60);
-            };
-    })();
     var rx = /INPUT|SELECT|TEXTAREA/i;
     $(document).bind("keydown keypress", function(e){
         if( e.which == 8 ){ // 8 == backspace
