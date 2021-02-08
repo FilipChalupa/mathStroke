@@ -792,7 +792,7 @@ function startGameStoryLoop(){
                         var typeT = tasksHolder[basicLevel+harderPlus].type,
                             versionT = tasksHolder[basicLevel+harderPlus].version;
                         newTask = getTask(typeT,versionT);
-                        newTask.time = Math.ceil((60/level+80/indexInLevel+70)/world);
+                        newTask.time = 2 * Math.ceil((60/level+80/indexInLevel+70)/world);
                         tasksSpaceI = Math.ceil(newTask.time/(tasksUsed[harderPlus]+2));
                         runningTasks[taskLastId] = {
                             id: taskLastId,
