@@ -331,12 +331,23 @@ body.sprint #lobby .levelNumb {
     text-align: center;
 }
 .keyboard .button.submit {
+    position: relative;
     width: 254px;
     line-height: 34px;
     padding: 5px;
     text-align: center;
     max-width: none;
     overflow: hidden;
+}
+.keyboard .button.submit::after {
+    content: '▶';
+    display: flex;
+    align-items: center;
+    font-size: 0.75em;
+    position: absolute;
+    top: 0;
+    right: 10px;
+    bottom: 0;
 }
 .hideKeyboard .button:not(.submit) {
     display: none;
