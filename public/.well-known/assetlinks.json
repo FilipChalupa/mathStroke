@@ -1,0 +1,5 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target" : { "namespace": "android_app", "package_name": "app.mathstroke.twa",
+                   "sha256_cert_fingerprints": ["20:14:C6:2E:91:1B:1D:E0:B5:81:F6:AE:32:C7:EA:C7:B4:70:BF:01:22:6C:6F:13:3F:CA:90:9E:2E:92:C8:7D"] }
+    }]
