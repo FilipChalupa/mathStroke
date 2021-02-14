@@ -1,620 +1,704 @@
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 16px;
-    font: inherit;
-    vertical-align: baseline;
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 16px;
+	font: inherit;
+	vertical-align: baseline;
 }
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-    display: block;
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+	display: block;
 }
 body {
-    line-height: 1;
-    text-align: center;
+	line-height: 1;
+	text-align: center;
 }
-ol, ul {
-    list-style: none;
+ol,
+ul {
+	list-style: none;
 }
-blockquote, q {
-    quotes: none;
+blockquote,
+q {
+	quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+	content: '';
+	content: none;
 }
 table {
-    border-collapse: collapse;
-    border-spacing: 0;
+	border-collapse: collapse;
+	border-spacing: 0;
 }
 a {
-    text-decoration: none;
-    color: inherit;
+	text-decoration: none;
+	color: inherit;
 }
 a:hover {
-    text-decoration: underline;
+	text-decoration: underline;
 }
 label:hover {
-    cursor: pointer;
+	cursor: pointer;
 }
-html, body {
-    margin: 0;
-    padding: 0;
+html,
+body {
+	margin: 0;
+	padding: 0;
 }
 body {
-    color: white;
-    background-color: black;
+	color: white;
+	background-color: black;
 }
-body, input, textarea {
-    font-family: 'Segoe UI',Helvetica,Arial,'Sans-Serif';
+body,
+input,
+textarea {
+	font-family: 'Segoe UI', Helvetica, Arial, 'Sans-Serif';
 }
 
 .clearer {
-    clear: both;
+	clear: both;
 }
 .room {
-    display: none;
+	display: none;
 }
 .room.show {
-    display: block;
+	display: block;
 }
 .button,
-#settings input[type="text"] {
-    margin: 15px auto;
-    max-width: 230px;
-    border: 3px solid #828282;
-    color: #828282;
-    text-transform: uppercase;
-    padding: 15px;
-    font-size: 20px;
-    background-color: transparent;
-    text-align: center;
+#settings input[type='text'] {
+	margin: 15px auto;
+	max-width: 230px;
+	border: 3px solid #828282;
+	color: #828282;
+	text-transform: uppercase;
+	padding: 15px;
+	font-size: 20px;
+	background-color: transparent;
+	text-align: center;
 }
 .button {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 .button:hover {
-    cursor: pointer;
+	cursor: pointer;
 }
 .button.selected,
 #game.right .keyboard .button.submit,
 #game.wrong .keyboard .button.submit,
 #lobby .ready.block.selected {
-    border-color: transparent;
-    background-color: #0050EF;
-    color: white;
+	border-color: transparent;
+	background-color: #0050ef;
+	color: white;
 }
-#settings input[type="text"] {
-    text-transform: none;
+#settings input[type='text'] {
+	text-transform: none;
 }
-#settings input[type="text"]:focus {
-    color: white;
-    border-color: white;
+#settings input[type='text']:focus {
+	color: white;
+	border-color: white;
 }
 #messages .msg {
-    display: none;
+	display: none;
 }
 #messages .msg.show {
-    display: block;
+	display: block;
 }
 #game:after {
-    transition: all .2s;
-    -webkit-transition: all .2s;
-    content: '';
-    display: block;
-    position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+	transition: all 0.2s;
+	-webkit-transition: all 0.2s;
+	content: '';
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }
 #game.wrong:after {
-    border: 1px solid #FF0000;
-    box-shadow: inset 0 0 20px #FF0000;
-    z-index: 9;
+	border: 1px solid #ff0000;
+	box-shadow: inset 0 0 20px #ff0000;
+	z-index: 9;
 }
 #game.right:after {
-    border: 1px solid #00FF00;
-    box-shadow: inset 0 0 20px #00FF00;
-    z-index: 9;
+	border: 1px solid #00ff00;
+	box-shadow: inset 0 0 20px #00ff00;
+	z-index: 9;
 }
 .task {
-    position: relative;
-    max-width: 268px;
-    margin: 0 auto;
-    border: 1px solid #828282;
-    color: white;
-    transition: color .2s, background-color .2s, box-shadow .2s, opacity .4s;
-    -webkit-transition: color .2s, background-color .2s, box-shadow .2s, opacity .4s;
-    margin-top: 10px;
-    opacity: 0;
+	position: relative;
+	max-width: 268px;
+	margin: 0 auto;
+	border: 1px solid #828282;
+	color: white;
+	transition: color 0.2s, background-color 0.2s, box-shadow 0.2s, opacity 0.4s;
+	-webkit-transition: color 0.2s, background-color 0.2s, box-shadow 0.2s,
+		opacity 0.4s;
+	margin-top: 10px;
+	opacity: 0;
 }
 .task.show {
-    opacity: 1;
+	opacity: 1;
 }
 .task.danger {
-    color: black;
-    background-color: white;
+	color: black;
+	background-color: white;
 }
 .task.late {
-    border-color: #FF0000;
-    box-shadow: 0 0 5px #FF0000;
+	border-color: #ff0000;
+	box-shadow: 0 0 5px #ff0000;
 }
 .task .title {
-    padding: 5px;
+	padding: 5px;
 }
 .task .title .solution {
-    color: #4C4C4C;
-    font-weight: bold;
+	color: #4c4c4c;
+	font-weight: bold;
 }
 .task .t_wrapper {
-    padding: 5px;
+	padding: 5px;
 }
 .task .time {
-    height: 10px;
-    width: 0%;
-    margin: 0 auto;
-    background-color: white;
-    opacity: 0;
-    transition: width .12s, opacity .4s, background-color .2s;
-    -webkit-transition: width .12s, opacity .4s, background-color .2s;
+	height: 10px;
+	width: 0%;
+	margin: 0 auto;
+	background-color: white;
+	opacity: 0;
+	transition: width 0.12s, opacity 0.4s, background-color 0.2s;
+	-webkit-transition: width 0.12s, opacity 0.4s, background-color 0.2s;
 }
 .task.solved .t_wrapper {
-    display: none;
+	display: none;
 }
 .task .player {
-    line-height: 20px;
-    height: 20px;
-    color: #828282;
+	line-height: 20px;
+	height: 20px;
+	color: #828282;
 }
 .task.danger .time {
-    background-color: black;
+	background-color: black;
 }
 .task.solved .title {
-    color: #4C4C4C;
+	color: #4c4c4c;
 }
 .task.solved .solution {
-    color: inherit;
+	color: inherit;
 }
 .task.solved {
-    border-color: #2C2C2C;
+	border-color: #2c2c2c;
 }
 .roomTitle {
-    font-size: 30px;
-    padding: 15px 0 10px 0;
-    font-weight: bold;
+	font-size: 30px;
+	padding: 15px 0 10px 0;
+	font-weight: bold;
 }
 #lobby .failure {
-    display: none;
-    padding-bottom: 3px;
-    color: #FF0000;
+	display: none;
+	padding-bottom: 3px;
+	color: #ff0000;
 }
 #lobby .failure .level {
-    font-weight: bold;
+	font-weight: bold;
 }
 #lobby .failure.show {
-    display: block;
+	display: block;
 }
 body.sprint .levelTR {
-    display: none;
+	display: none;
 }
 #lobby .levelNumb {
-    font-size: 22px;
-    font-weight: normal;
+	font-size: 22px;
+	font-weight: normal;
 }
 body.sprint #lobby .levelNumb {
-    display: none;
+	display: none;
 }
 #lobby .storyTitle {
-    padding-bottom: 5px;
+	padding-bottom: 5px;
 }
 #lobby .story,
 .stats {
-    max-width: 250px;
-    margin: 15px auto;
-    padding: 5px;
-    border: 3px solid #2C2C2C;
+	max-width: 250px;
+	margin: 15px auto;
+	padding: 5px;
+	border: 3px solid #2c2c2c;
 }
 #lobby .story {
-    display: none;
+	display: none;
 }
 #lobby .story.show {
-    /*display: block;*/
+	/*display: block;*/
 }
 #lobby .typeVoting {
-    display: none;
-    max-width: 266px;
-    margin: 0 auto;
+	display: none;
+	max-width: 266px;
+	margin: 0 auto;
 }
 #lobby .typeVoting.show {
-    display: block;
+	display: block;
 }
 #lobby .typeVoting .button {
-    float: left;
-    width: 90px;
-    margin-top: 0;
-    margin-bottom: 0;
+	float: left;
+	width: 90px;
+	margin-top: 0;
+	margin-bottom: 0;
 }
 #lobby .typeVoting .divider {
-    float: left;
-    width: 14px;
-    height: 4px;
+	float: left;
+	width: 14px;
+	height: 4px;
 }
 #lobby .levelTitle {
-    font-size: 22px;
-    padding: 5px;
+	font-size: 22px;
+	padding: 5px;
 }
 #lobby .levelText {
-    width: 250px;
-    overflow: auto;
-    text-align: center;
+	width: 250px;
+	overflow: auto;
+	text-align: center;
 }
 #lobby .levelText > div {
-    padding: 5px 0;
+	padding: 5px 0;
 }
 #lobby .levelText p {
-    padding: 5px;
-    text-align: justify;
-    text-indent: 35px;
+	padding: 5px;
+	text-align: justify;
+	text-indent: 35px;
 }
 #lobby .ready.block {
-    border-color: #2C2C2C;
+	border-color: #2c2c2c;
 }
 #game .countdown {
-    padding-top: 35px;
-    font-size: 50px;
-    font-weight: bold;
-    transition: opacity 1s;
-    -webkit-transition: opacity 1s;
+	padding-top: 35px;
+	font-size: 50px;
+	font-weight: bold;
+	transition: opacity 1s;
+	-webkit-transition: opacity 1s;
 }
 #game .countdown.hide {
-    opacity: 0;
+	opacity: 0;
 }
 #game .tasks {
-    position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-    overflow: hidden;
-    z-index: 6;
-    padding-bottom: 280px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	overflow: hidden;
+	z-index: 6;
+	padding-bottom: 280px;
 }
-#game.hideKeyboard .tasks  {
-    padding-bottom: 70px;
+#game.hideKeyboard .tasks {
+	padding-bottom: 70px;
 }
 #game .control {
-    position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    z-index: 7;
-    height: 280px;
-    background-color: black;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 7;
+	height: 280px;
+	background-color: black;
 }
 #game.hideKeyboard .control {
-    height: 70px;
+	height: 70px;
 }
 .keyboard {
-    width: 280px;
-    margin: 0 auto;
-    font-size: 30px;
-    position: relative;
+	width: 280px;
+	margin: 0 auto;
+	font-size: 30px;
+	position: relative;
 }
 .keyboard .button {
-    text-align: left;
-    margin: 5px;
-    width: 44px;
-    height: 34px;
-    padding: 20px 5px 0 5px;
-    float: left;
-    font-size: inherit;
+	text-align: left;
+	margin: 5px;
+	width: 44px;
+	height: 34px;
+	padding: 20px 5px 0 5px;
+	float: left;
+	font-size: inherit;
 }
 .keyboard .button.backspace {
-    width: 114px;
-    text-align: center;
+	width: 114px;
+	text-align: center;
 }
 .keyboard .button.submit {
-    position: relative;
-    width: 254px;
-    line-height: 34px;
-    padding: 5px;
-    text-align: center;
-    max-width: none;
-    overflow: hidden;
+	position: relative;
+	width: 254px;
+	line-height: 34px;
+	padding: 5px;
+	text-align: center;
+	max-width: none;
+	overflow: hidden;
 }
 .keyboard .button.submit::after {
-    content: '▶';
-    display: flex;
-    align-items: center;
-    font-size: 0.75em;
-    position: absolute;
-    top: 0;
-    right: 10px;
-    bottom: 0;
+	content: '▶';
+	display: flex;
+	align-items: center;
+	font-size: 0.75em;
+	position: absolute;
+	top: 0;
+	right: 10px;
+	bottom: 0;
 }
 .hideKeyboard .button:not(.submit) {
-    display: none;
+	display: none;
 }
 .stats {
-    padding-bottom: 10px;
+	padding-bottom: 10px;
 }
 .stats .levelFailure,
 .stats .tasksSolved,
 .stats .timeSaved {
-    font-weight: bold;
+	font-weight: bold;
 }
 .stats table {
-    display: inline-block;
+	display: inline-block;
 }
 .stats tr td {
-    text-align: left;
-    padding-left: 5px;
+	text-align: left;
+	padding-left: 5px;
 }
 .stats tr td:first-child {
-    text-align: right;
-    padding-left: 0;
+	text-align: right;
+	padding-left: 0;
 }
 .stats > .titles {
-    color: #828282;
+	color: #828282;
 }
 .stats > .titles > div {
-    float: left;
-    margin-bottom: 10px;
-    height: 30px;
-    line-height: 30px;
-    font-size: 23px;
+	float: left;
+	margin-bottom: 10px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 23px;
 }
 .stats > .list > div {
-    clear: both;
+	clear: both;
 }
 .stats > .titles > .nick,
 .stats > .list > div > .nick {
-    width: 60%;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    text-align: left;
-    text-indent: 5px;
+	width: 60%;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	text-align: left;
+	text-indent: 5px;
 }
 .stats > .titles > .rank,
 .stats > .list > div > .rank {
-    width: 10%;
+	width: 10%;
 }
 .stats > .titles > .answers {
-    line-height: 25px;
+	line-height: 25px;
 }
 .stats > .titles > .answers,
 .stats > .list > div > .answers {
-    width: 40%;
+	width: 40%;
 }
 .stats > .titles > .sprintTime,
 .stats > .list > div > .sprintTime {
-    width: 30%;
-    display: none;
+	width: 30%;
+	display: none;
 }
 body.sprint .stats > .titles > .sprintTime,
 body.sprint .stats > .list > div > .sprintTime {
-    display: block;
+	display: block;
 }
 .stats > .titles > .right,
 .stats > .titles > .wrong,
 .stats > .list > div > .right,
 .stats > .list > div > .wrong {
-    width: 15%;
-    display: none;
+	width: 15%;
+	display: none;
 }
 body.story .stats > .titles > .right,
 body.story .stats > .titles > .wrong,
 body.story .stats > .list > div > .right,
 body.story .stats > .list > div > .wrong {
-    display: block;
+	display: block;
 }
 .stats > .titles > .answers > .title {
-    width: 100%;
+	width: 100%;
 }
 .stats > .list > div > div {
-    float: left;
+	float: left;
 }
 .stats > .list > .local > .nick {
-    text-decoration: underline;
+	text-decoration: underline;
 }
 .stats .list > div {
-    color: #0050EF;
-    font-size: 16px;
-    height: 20px;
-    line-height: 20px;
+	color: #0050ef;
+	font-size: 16px;
+	height: 20px;
+	line-height: 20px;
 }
 .stats .list > .notReady {
-    color: #828282;
+	color: #828282;
 }
 .stats .list > .gone {
-    color: #2C2C2C;
+	color: #2c2c2c;
 }
 .switchToggle {
-    max-width: 264px;
-    margin: 0 auto;
-    padding: 15px 0;
-    font-size: 20px;
-    font-weight: bold;
-    min-height: 23px;
-    position: relative;
-    text-align: left;
+	max-width: 264px;
+	margin: 0 auto;
+	padding: 15px 0;
+	font-size: 20px;
+	font-weight: bold;
+	min-height: 23px;
+	position: relative;
+	text-align: left;
 }
 .switchToggle > .title {
-    padding-right: 74px;
-    padding-left: 5px;
+	padding-right: 74px;
+	padding-left: 5px;
 }
 .switchToggle:hover {
-    cursor: pointer;
+	cursor: pointer;
 }
 .switchToggle > .s {
-    border: 3px solid white;
-    position: absolute;
-        top: 15px;
-        right: 2px;
-    width: 60px;
-    height: 17px;
+	border: 3px solid white;
+	position: absolute;
+	top: 15px;
+	right: 2px;
+	width: 60px;
+	height: 17px;
 }
 .switchToggle.selected > .s {
-    background-color: #0050EF;
+	background-color: #0050ef;
 }
 .switchToggle > .s:before,
 .switchToggle > .s:after {
-    content: '';
-    display: block;
-    position: absolute;
-    border: 3px solid black;
+	content: '';
+	display: block;
+	position: absolute;
+	border: 3px solid black;
 }
 .switchToggle > .s:before {
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 }
 .switchToggle > .s:after {
-    background-color: white;
-    width: 14px;
-        top: -8px;
-        bottom: -8px;
-        left: -3px;
+	background-color: white;
+	width: 14px;
+	top: -8px;
+	bottom: -8px;
+	left: -3px;
 }
 .switchToggle.selected > .s:after {
-        left: 46px;
+	left: 46px;
 }
 
 #game .sprintStats {
-    display: none;
-    max-width: 250px;
-    margin: 15px auto;
-    padding: 5px;
-    border: 3px solid #2C2C2C;
-    color: #828282;
+	display: none;
+	max-width: 250px;
+	margin: 15px auto;
+	padding: 5px;
+	border: 3px solid #2c2c2c;
+	color: #828282;
 }
 #game .sprintStats.show {
-    display: block;
+	display: block;
 }
 #game .sprintStats > div {
-    height: 30px;
-    position: relative;
-    margin: 10px;
+	height: 30px;
+	position: relative;
+	margin: 10px;
 }
 #game .sprintStats > div.gone {
-    opacity: 0.2;
+	opacity: 0.2;
 }
 #game .sprintStats > div .nick,
 #game .sprintStats > div .bar {
-    position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }
 #game .sprintStats > div .nick {
-    z-index: 2;
-    text-align: left;
+	z-index: 2;
+	text-align: left;
 }
 #game .sprintStats > div .bar {
-    margin-right: auto;
-    transition: width 0.4s;
-    -webkit-transition: width 0.4s;
-    width: 0%;
-    background-color: #828282;
-        top: auto;
-        bottom: 4px;
-    height: 2px;
-    box-shadow: 0 0 3px #828282;
+	margin-right: auto;
+	transition: width 0.4s;
+	-webkit-transition: width 0.4s;
+	width: 0%;
+	background-color: #828282;
+	top: auto;
+	bottom: 4px;
+	height: 2px;
+	box-shadow: 0 0 3px #828282;
 }
 #game .sprintStats > div .bar:after {
-    content: '';
-    display: block;
-    width: 6px;
-    height: 6px;
-    border-radius: 3px;
-    background-color: #828282;
-    box-shadow: 0 0 3px #828282;
-    position: absolute;
-        top: -2px;
-        right: -4px;
+	content: '';
+	display: block;
+	width: 6px;
+	height: 6px;
+	border-radius: 3px;
+	background-color: #828282;
+	box-shadow: 0 0 3px #828282;
+	position: absolute;
+	top: -2px;
+	right: -4px;
 }
 #game .sprintStats > div.done .bar {
-    background-color: white;
-    box-shadow: 0 0 3px white;
+	background-color: white;
+	box-shadow: 0 0 3px white;
 }
 #game .sprintStats > div.done .bar:after {
-    background-color: white;
-    box-shadow: 0 0 3px white;
+	background-color: white;
+	box-shadow: 0 0 3px white;
 }
-
 
 @media (max-width: 400px) {
-    .keyboard {
-        width: auto;
-        font-size: 20px;
-        font-weight: bold;
-    }
-    .keyboard .button.submit {
-        width: auto;
-        float: none;
-        margin: 2px 1%;
-    }
-    .keyboard .button:not(.submit) {
-        width: 23%;
-        margin: 3px 1%;
-        padding: 0;
-        border: none;
-        text-align: center;
-        padding: 10px 0;
-        position: relative;
-        line-height: 30px;
-        height: 30px;
-    }
-    .keyboard .button.backspace {
-        width: 48%;
-    }
-    .keyboard .button:not(.submit):after {
-        content: '';
-        display: block;
-        position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        border: 3px solid #828282;
-    }
-    .keyboard .button:not(.submit).selected:after {
-        display: none;
-    }
-    #game .control,
-    #game.hideKeyboard .control {
-        height: auto;
-    }
-    #game .tasks {
-        padding-bottom: 222px;
-    }
-    #game.hideKeyboard .tasks  {
-        padding-bottom: 54px;
-    }
+	.keyboard {
+		width: auto;
+		font-size: 20px;
+		font-weight: bold;
+	}
+	.keyboard .button.submit {
+		width: auto;
+		float: none;
+		margin: 2px 1%;
+	}
+	.keyboard .button:not(.submit) {
+		width: 23%;
+		margin: 3px 1%;
+		padding: 0;
+		border: none;
+		text-align: center;
+		padding: 10px 0;
+		position: relative;
+		line-height: 30px;
+		height: 30px;
+	}
+	.keyboard .button.backspace {
+		width: 48%;
+	}
+	.keyboard .button:not(.submit):after {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border: 3px solid #828282;
+	}
+	.keyboard .button:not(.submit).selected:after {
+		display: none;
+	}
+	#game .control,
+	#game.hideKeyboard .control {
+		height: auto;
+	}
+	#game .tasks {
+		padding-bottom: 222px;
+	}
+	#game.hideKeyboard .tasks {
+		padding-bottom: 54px;
+	}
 }
 .loading {
-    height: 16px;
-    width: 16px;
-    margin: 10px auto;
-    background-image: url(../images/loading.gif);
+	height: 16px;
+	width: 16px;
+	margin: 10px auto;
+	background-image: url(../images/loading.gif);
 }
