@@ -3,7 +3,7 @@ mathStroke
 
 Do you like math? Let's play mathStroke. Multiplayer online game which helps you practise basic calculations.
 
-https://math-stroke.herokuapp.com/
+Play [https://mathstroke.onrender.com](https://mathstroke.onrender.com).
 
 ![Screenshot](https://raw.github.com/Onset/mathStroke/master/screenshot.png)
 
